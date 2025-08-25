@@ -13,6 +13,8 @@ import javax.imageio.ImageIO;
 import java.io.*;
 import java.nio.ByteBuffer;
 
+import static java.lang.Thread.sleep;
+
 public class CanvasController {
     @FXML
     private Canvas canvas;
@@ -59,8 +61,8 @@ public class CanvasController {
         });
 
         canvas.setOnMouseClicked(e -> {
-           Image snapshot = canvas.snapshot(null, null);
-           sendImage(snapshot);
+            Image snapshot = canvas.snapshot(null, null);
+            sendImage(snapshot);
         });
 
         clear.setOnAction(e -> ClearCanvas());
@@ -75,13 +77,13 @@ public class CanvasController {
         wordLabel.setText("DRAW THIS: "+word);
     }
     public void onSave(){
-         try{
-             String path = "C:\\Users\\Ahnaf\\Desktop";
-             Image snapshot = canvas.snapshot(null, null);
-             ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), "png", new File(path));
-         }catch (Exception e){
-             System.out.println("Failed to save image" + e);
-         }
+        try{
+            String path = "C:\\Users\\Ahnaf\\Desktop";
+            Image snapshot = canvas.snapshot(null, null);
+            ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), "png", new File(path));
+        }catch (Exception e){
+            System.out.println("Failed to save image" + e);
+        }
     }
 
     public void onMessage(){
@@ -102,7 +104,19 @@ public class CanvasController {
     public void onExit(){ System.exit(0); }
 
     public Thread setTimer(int duration){
-
+      Thread t= new Thread(() -> {
+          try{
+              for(int dur=duration; dur>=1; dur--){
+                  int finalDur = dur;
+                  Platform.runLater(()-> displayTimer.setText("Timer: "+0));
+                  sleep(1000);
+              }
+              Platform.runLater(()-> displayTimer.setText("Timer: "+0));
+          }catch (Exception e){
+              e.printStackTrace();
+          }
+      });
+      return t;
     }
 
 
