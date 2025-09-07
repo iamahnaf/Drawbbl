@@ -13,7 +13,8 @@ public class TestFX extends Application {
     @Override
     public void start(Stage primaryStage) {
         // Create a button
-        Button button = new Button("Click me!");
+        Button button = new Button("Click Me");
+
         button.setOnAction(e -> System.out.println("Button clicked!"));
 
         // Root layout
