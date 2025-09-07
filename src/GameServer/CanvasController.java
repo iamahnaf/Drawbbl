@@ -82,7 +82,8 @@ public class CanvasController {
             Image snapshot = canvas.snapshot(null, null);
             ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), "png", new File(path));
         }catch (Exception e){
-            System.out.println("Failed to save image" + e);
+            //for saving image on pc
+            System.out.println("Saved image on this pc");
         }
     }
 
