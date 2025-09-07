@@ -24,7 +24,7 @@ public class TestFX extends Application {
         Scene scene = new Scene(root, 400, 300);
 
         // Stage setup
-        primaryStage.setTitle("JavaFX Test App");
+        primaryStage.setTitle("JavaFX Test ");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
