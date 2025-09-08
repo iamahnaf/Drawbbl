@@ -72,7 +72,7 @@ public class ServerMain extends Application {
             client = listener.accept();
             ObjectOutputStream dOut = new ObjectOutputStream(client.getOutputStream());
             ObjectInputStream dIn = new ObjectInputStream(client.getInputStream());
-            System.out.println("Main : Connected");
+            System.out.println("Main: Connected");
             StartHandler sThread = new StartHandler(clients,i,dOut,dIn);
             oosList.add(dOut);
             oisList.add(dIn);
