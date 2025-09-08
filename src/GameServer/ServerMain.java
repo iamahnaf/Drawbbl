@@ -38,7 +38,7 @@ public class ServerMain extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         Parent root = FXMLLoader.load(ClassLoader.getSystemClassLoader().getResource("canva.fxml"));
-        stage.setTitle("Game Server");
+        stage.setTitle("Game  Server");
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
