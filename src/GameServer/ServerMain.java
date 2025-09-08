@@ -77,11 +77,11 @@ public class ServerMain extends Application {
             oosList.add(dOut);
             oisList.add(dIn);
             clients.add(sThread);
-           pool.execute(sThread);
+            pool.execute(sThread);
         }
         pool.shutdown();
         pool.awaitTermination(10, TimeUnit.SECONDS);
-        System.out.println("Start Handler closed..");
+        System.out.println("Start Handler closed...");
     }
    static String getWinners(){
         int i=0,ind=0,max=0;
