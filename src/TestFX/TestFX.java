@@ -6,7 +6,8 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
-//EDIT VM
+//for javaFX setup
+//edit vm
 //--module-path "D:\UIU CSE\Codes & Libs\JavaLib\javafx-sdk-24.0.2\lib" --add-modules javafx.controls,javafx.fxml
 public class TestFX extends Application {
 
