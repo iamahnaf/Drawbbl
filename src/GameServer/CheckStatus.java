@@ -22,7 +22,7 @@ public class CheckStatus {
         ServerMain.canvasOut.remove(i);
 
         if(ServerMain.name.size()==0){
-            System.out.println("All player have left...\nClosing Server");
+            System.out.println("All player have left...\n");
           System.exit(0);
         }
     }
