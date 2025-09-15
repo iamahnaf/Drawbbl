@@ -136,6 +136,22 @@ public class CanvasController {
         t.start();
         return t;
     }
+  public void sendImage(Image image){
+        new Thread(()->{
+            try{
+                byte [] imsize;
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", byteArrayOutputStream);
+                imsize=ByteBuffer.allocate(4).putInt(byteArrayOutputStream.size()).array();
 
+                for(OutputStream os: ServerMain.canvasOut){
+                    
+                }
+
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        })
+  }
 
 }
