@@ -218,7 +218,7 @@ public class CanvasController {
                 if(word.equals(guess.toLowerCase())){
                     int score= ServerMain.scoreList.get(pnum);
                     if(!answered && timer.isAlive()){
-                        ServerMain.scoreList.remove(pnum,score+10);
+                        ServerMain.scoreList.set(pnum,score+10);
                         sendResOut(pname+": Got it Correct");
                         answered=true;
                     }
@@ -237,14 +237,31 @@ public class CanvasController {
         }
      }
 
-    private void sendScores(int round) {
+    public void sendScores(int round) throws IOException {
+        if(round==ServerMain.rounds) sendResOut("\nSERVER: \nFINAL SCORES");
+        else sendResOut("\nSERVER:\nScores after round:"+round);
 
+        Platform.runLater(()->list.appendText("Score:\n"));
+        int l=ServerMain.name.size();
+        for(int i=0;i<l;i++){
+            String res=ServerMain.name.get(i)+" -  "+ServerMain.scoreList.get(i);
+            Platform.runLater(()->list.appendText(res+"\n"));
+            sendResOut(res);
+        }
     }
 
-    private synchronized void sendResOut(String res) throws IOException{
+    public synchronized void sendResOut(String res) throws IOException{
         for(ObjectOutputStream oos:ServerMain.oosList){
             oos.writeObject(res);
             oos.flush();
         }
+    }
+    public String getWordLength(String word) {
+        StringBuilder wl = new StringBuilder();
+        for (char c : word.toCharArray()) {
+            if (c != ' ') wl.append("_ ");
+            else wl.append("+ ");
+        }
+        return wl.toString();
     }
 }
