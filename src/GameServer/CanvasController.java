@@ -156,6 +156,31 @@ public class CanvasController {
         }).start();
   }
      public void gameHandler(){
-        int pc
+        int pc=ServerMain.playerCount;
+
+        for(int round=1;round<=ServerMain.rounds;round++){
+
+            Platform.runLater(this::ClearCanvas);
+            System.out.println("GameHandler round "+round);
+            String word=ServerMain.words.get((int) (Math.random()*ServerMain.words.size()));
+            System.out.println(", word chosen: "+word);
+            String wordLength=getWordLength(word);
+            try{
+                sendResOut("Round: "+round+"   word:  "+wordLength);
+            }catch (IOException e){
+                System.out.println("Error in sendResOut");
+                e.printStackTrace();
+            }
+
+            Platform.runLater(() -> setWord(word));
+            Thread timer=setTimer(90),waitTimer;
+            Thread[] play= new Thread[pc];
+            for(int pnum=0;pnum<pc;pnum++){
+                int finalPnum=pnum;
+                play[pnum]=new Thread(()->gamePlay(finalPnum,word,timer));
+                play[pnum].start();
+            }
+
+        }
      }
 }
