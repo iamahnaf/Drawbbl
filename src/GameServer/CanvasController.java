@@ -145,13 +145,17 @@ public class CanvasController {
                 imsize=ByteBuffer.allocate(4).putInt(byteArrayOutputStream.size()).array();
 
                 for(OutputStream os: ServerMain.canvasOut){
-                    
+                     os.write(imsize);
+                     os.write(byteArrayOutputStream.toByteArray());
+                     os.flush();
                 }
-
+           byteArrayOutputStream.close();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-        })
+        }).start();
   }
-
+     public void gameHandler(){
+        int pc
+     }
 }
