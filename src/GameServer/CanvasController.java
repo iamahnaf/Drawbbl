@@ -119,7 +119,23 @@ public class CanvasController {
       });
       return t;
     }
-
+    public Thread setWaitTimer(int duration){
+        Thread t= new Thread(() -> {
+            try{
+                for(int dur=duration; dur>=1; dur--){
+                    int finalDur = dur;
+                    Platform.runLater(()-> displayTimer.setText("Next Round starting in: "+0));
+                    sleep(1000);
+                }
+                Platform.runLater(()-> displayTimer.setText("Next Round starting in: "+0));
+            }catch (Exception e){
+                System.out.println("Error in setWaitTimer");
+                e.printStackTrace();
+            }
+        });
+        t.start();
+        return t;
+    }
 
 
 }
