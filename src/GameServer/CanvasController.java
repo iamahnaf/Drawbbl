@@ -180,7 +180,71 @@ public class CanvasController {
                 play[pnum]=new Thread(()->gamePlay(finalPnum,word,timer));
                 play[pnum].start();
             }
-
+           try{
+               timer.join();
+               sendScores(round);
+               if(round<ServerMain.rounds){
+                   waitTimer=setWaitTimer(15);
+                   sendResOut("Round Over");
+                   for(int pnum=0;pnum<pc;pnum++){
+                       play[pnum].join();
+                   }
+                   sendResOut("Round: "+round+"   word: "+word);
+                   waitTimer.join();
+               }
+               else{
+                   sendResOut("Winner:\n"+ServerMain.getWinners());
+                   sendResOut("Game Over");
+                   sendResOut("Round: "+round+"   word: "+word);
+                   System.exit(0);
+               }
+           } catch (Exception e) {
+               System.out.println("Error in GameHandler");
+               e.printStackTrace();
+           }
         }
      }
+     public void gamePlay(int pnum, String word, Thread timer){
+        String pname=ServerMain.name.get(pnum);
+        try{
+            ObjectInputStream ois= ServerMain.oisList.get(pnum);
+            boolean answered=false;
+            while(timer.isAlive()){
+                String guess= (String) ois.readObject();
+                if(guess.equals("IM_DONE_GUESSING")){
+                    break;
+                }
+                Platform.runLater(()->list.appendText(pname+": "+guess+"\n"));
+                if(word.equals(guess.toLowerCase())){
+                    int score= ServerMain.scoreList.get(pnum);
+                    if(!answered && timer.isAlive()){
+                        ServerMain.scoreList.remove(pnum,score+10);
+                        sendResOut(pname+": Got it Correct");
+                        answered=true;
+                    }
+                    else sendResOut(pname+": Already Answered");
+                }
+                else {
+                    sendResOut(pname+": "+guess);
+                }
+            }
+        }catch (IOException | ClassNotFoundException e){
+            try{
+                checker.checkPresence();
+            }catch (IOException ioException){
+                ioException.printStackTrace();
+            }
+        }
+     }
+
+    private void sendScores(int round) {
+
+    }
+
+    private synchronized void sendResOut(String res) throws IOException{
+        for(ObjectOutputStream oos:ServerMain.oosList){
+            oos.writeObject(res);
+            oos.flush();
+        }
+    }
 }
