@@ -52,13 +52,16 @@ public class Server extends Application{
         launch(args);
     }
 
-    private static void getWords() throws FileNotFoundException {
-        File wordsFile=new File("C:\\Users\\Ahnaf\\Desktop\\New folder (2)\\Pictionary-Game-in-JavaFX-and-Sockets\\GameServerGUI\\words.txt");
-        Scanner sc=new Scanner(wordsFile);
-        sc.useDelimiter(", ");
-        while(sc.hasNext()) words.add(sc.next().toLowerCase(Locale.ROOT));
-//        Pattern pat = Pattern.compile("[a-zA-Z]+");
-//        while(sc.hasNext() && pat.matcher(sc.next()).matches()) words.add(sc.next().toLowerCase(Locale.ROOT));
+    private static void getWords() {
+       try{
+           File wordsFile=new File("words.txt");
+           Scanner sc=new Scanner(wordsFile);
+           sc.useDelimiter(", ");
+           while(sc.hasNext()) words.add(sc.next().toLowerCase(Locale.ROOT));
+       }catch (FileNotFoundException e){
+           System.out.println("File not found");
+       }
+
     }
 
     private static void getStartHandler() throws InterruptedException, IOException {
@@ -97,32 +100,5 @@ public class Server extends Application{
             }
         }
         return wins;
-    }
-}
-
-class CheckStatus{
-    public void checkPresence() throws IOException {
-        int i=0;
-        for(Socket s:Server.socketList){
-            if(s.getInputStream().read()==-1){
-                playerExitHandler(i);
-                break;
-            }
-            i++;
-        }
-    }
-
-    public static void playerExitHandler(int ind){
-        System.out.println(Server.names.get(ind)+" has left..");
-        Server.names.remove(ind);
-        Server.scoreList.remove(ind);
-        Server.oosList.remove(ind);
-        Server.oisList.remove(ind);
-        Server.canvasOut.remove(ind);
-
-        if(Server.names.size()==0){
-            System.out.println("All players have Left...\nClosing SERVER..");
-            System.exit(0);
-        }
     }
 }
