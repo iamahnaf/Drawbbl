@@ -30,7 +30,7 @@ public class ImageviewController {
 
     public void onSave(){
         try{
-            String path="/home/tarun/Desktop/paint1.png";
+            String path="/home.png";
             Image snapshot=imView.snapshot(null,null);
             ImageIO.write(SwingFXUtils.fromFXImage(snapshot,null),"png",new File(path));
         } catch (Exception e){ System.out.println("Failed to save image: "+e); }
