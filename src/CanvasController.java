@@ -80,7 +80,7 @@ public class CanvasController {
 
     public void onSave() {
         try {
-            String path = "/home/tarun/Desktop/paint2.png";
+            String path = "/Desktop/paint2.png";
             Image snapshot = canvas.snapshot(null, null);
             ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), "png", new File(path));
         } catch (Exception e) {
