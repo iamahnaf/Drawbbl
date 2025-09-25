@@ -92,9 +92,9 @@ public class CanvasController {
         message.setOnAction(e -> {
             String str = message.getText();
             if (!str.isEmpty()){
-                list.appendText("SERVER: " + str + "\n");
+                list.appendText("Server: " + str + "\n");
                 try {
-                    sendResOut("SERVER: "+str);
+                    sendResOut("Server: "+str);
                 } catch (IOException ioe) { ioe.printStackTrace(); }
                 message.clear();
             }
