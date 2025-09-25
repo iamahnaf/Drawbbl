@@ -75,7 +75,7 @@ public class CanvasController {
     }
 
     public void setWord(String word){
-        wordLabel.setText("DRAW THIS: "+word);
+        wordLabel.setText("Draw this : "+word);
     }
 
     public void onSave() {
