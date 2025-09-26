@@ -96,6 +96,7 @@ public class ImageviewController {
     }
 
     public void imageReceiver() throws IOException {
+
         InputStream is=player.imageIn.getInputStream();
         new Thread(()->{
             byte[] imSize,byteImage;
