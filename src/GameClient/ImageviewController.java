@@ -29,11 +29,7 @@ public class ImageviewController {
     boolean gameOver=false;
 
     public void onSave(){
-        try{
-            String path="/home.png";
-            Image snapshot=imView.snapshot(null,null);
-            ImageIO.write(SwingFXUtils.fromFXImage(snapshot,null),"png",new File(path));
-        } catch (Exception e){ System.out.println("Failed to save image: "+e); }
+        System.out.println();
     }
 
     public void onMessage(){
@@ -96,7 +92,6 @@ public class ImageviewController {
     }
 
     public void imageReceiver() throws IOException {
-
         InputStream is=player.imageIn.getInputStream();
         new Thread(()->{
             byte[] imSize,byteImage;
@@ -116,6 +111,7 @@ public class ImageviewController {
                 player.imageIn.close();
             } catch (IOException e) {e.printStackTrace();}
         }).start();
+
     }
 
     public void allResponses(){
