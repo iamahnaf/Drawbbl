@@ -29,7 +29,7 @@ public class ImageviewController {
     boolean gameOver=false;
 
     public void onSave(){
-        System.out.println("Saving Image....");
+        System.out.println("Saving Image");
     }
 
     public void onMessage(){
