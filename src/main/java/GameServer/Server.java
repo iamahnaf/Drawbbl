@@ -52,7 +52,7 @@ public class Server extends Application{
         launch(args);
     }
 
-    private static void getWords() {
+    public static void getWords() {
         try{
             File wordsFile=new File("word.txt");
             System.out.println("file found: "+wordsFile.exists());
@@ -64,7 +64,7 @@ public class Server extends Application{
         }
     }
 
-    private static void getStartHandler() throws InterruptedException, IOException {
+    public static void getStartHandler() throws InterruptedException, IOException {
         System.out.println("Player count set to: "+playerCount);
         listener=new ServerSocket(6666);
         listener1=new ServerSocket(6677); // This socket is now for drawing actions

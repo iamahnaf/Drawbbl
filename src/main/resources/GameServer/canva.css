@@ -1,0 +1,341 @@
+/********************
+ * GLOBAL / ROOT
+ ********************/
+.root-pane {
+    -fx-background-color:
+            linear-gradient(#0f1f13, #0b1810),
+            radial-gradient(center 50% 50%, radius 80%, rgba(55,120,70,0.20), transparent);
+    -fx-font-family: "Segoe UI", "Roboto", "Arial";
+    -fx-font-size: 14px;
+    -fx-text-fill: #e8f5e9;
+}
+
+/* Generic text tweaks */
+.label, .menu, .menu-item {
+    -fx-text-fill: #e8f5e9;
+}
+
+/********************
+ * MENUS
+ ********************/
+.menu-bar {
+    -fx-background-color: linear-gradient(#153a20, #0f2b18);
+    -fx-padding: 0 8 0 8;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 12, 0.15, 0, 3);
+}
+
+.menu-bar .label {
+    -fx-font-weight: bold;
+}
+
+.context-menu, .menu-item {
+    -fx-background-color: #16271b;
+}
+
+.menu-item:focused {
+    -fx-background-color: #1f4b2d;
+}
+
+/********************
+ * TOOLBAR
+ ********************/
+.main-toolbar {
+    -fx-background-color: linear-gradient(#16572d, #114423);
+    -fx-padding: 6 14 6 14;
+    -fx-spacing: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.45), 18, 0.2, 0, 4);
+    -fx-border-color: #1f6634;
+    -fx-border-width: 0 0 2 0;
+}
+
+.toolbar-row {
+    -fx-alignment: CENTER_LEFT;
+}
+
+.v-separator {
+    -fx-padding: 0 6 0 6;
+}
+
+.v-separator .line {
+    -fx-border-color: transparent;
+    -fx-background-color: rgba(255,255,255,0.25);
+    -fx-pref-width: 2px;
+}
+
+/********************
+ * LABELS
+ ********************/
+.label-small {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #d8eddc;
+}
+
+.timer-label {
+    -fx-font-weight: bold;
+    -fx-font-size: 18px;
+    -fx-text-fill: #ffffff;
+    -fx-background-color:
+            linear-gradient(#25753c, #1b5d31),
+            linear-gradient(#2b8a47, #1d5d33);
+    -fx-padding: 4 18 4 18;
+    -fx-background-radius: 28;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.55), 12, 0.2, 0, 3);
+}
+
+.word-label {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f4fff6;
+    -fx-background-color: linear-gradient(#1d4e2b, #14361d);
+    -fx-padding: 6 16 6 16;
+    -fx-background-radius: 0 18 18 0;
+    -fx-effect: innershadow(gaussian, rgba(255,255,255,0.07), 4, 0.2, 0, 1);
+}
+
+.heading-label {
+    -fx-font-size: 16px;
+    -fx-text-fill: #d0e9d5;
+    -fx-padding: 6 14 6 24;
+    -fx-font-weight: bold;
+}
+
+/********************
+ * CANVAS
+ ********************/
+/* White board wrapper for the drawing surface */
+.canvas-wrapper {
+    -fx-background-color: white;
+    -fx-padding: 12;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-border-color: linear-gradient(#2d7a3a, #1d5126);
+    -fx-border-width: 3;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 20, 0.2, 0, 6);
+}
+
+/* Optional: internal faint grid (comment out if not wanted)
+.canvas-wrapper {
+    -fx-background-image:
+        linear-gradient(to right, rgba(0,0,0,0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0,0,0,0.04) 1px, transparent 1px);
+    -fx-background-size: 20 20, 20 20;
+    -fx-background-color: white;
+}
+*/
+
+/********************
+ * BUTTONS
+ ********************/
+.button {
+    -fx-background-color:
+            linear-gradient(#2a7c43, #1d5d31),
+            linear-gradient(#308d4d, #1c4a2a);
+    -fx-text-fill: #f3fff5;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-padding: 8 18;
+    -fx-cursor: hand;
+    -fx-border-color: rgba(255,255,255,0.15);
+    -fx-border-radius: 8;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 8, 0.15, 0, 2);
+}
+
+.button:hover {
+    -fx-background-color:
+            linear-gradient(#339e55, #21703a),
+            linear-gradient(#3da863, #225d35);
+}
+
+.button:pressed {
+    -fx-background-color:
+            linear-gradient(#194d2b, #133a21);
+    -fx-effect: innershadow(gaussian, rgba(0,0,0,0.55), 10, 0.3, 0, 2);
+}
+
+.action-button {
+    -fx-background-color:
+            linear-gradient(#c62828, #8e1d1d),
+            linear-gradient(#d64545, #9f2727);
+    -fx-text-fill: #fff;
+}
+
+.action-button:hover {
+    -fx-background-color:
+            linear-gradient(#e53935, #aa2424),
+            linear-gradient(#ef5350, #b71c1c);
+}
+
+.action-button:pressed {
+    -fx-background-color:
+            linear-gradient(#7f1515, #5f0e0e);
+}
+
+/********************
+ * CHECKBOX (Eraser)
+ ********************/
+.toggle-eraser {
+    -fx-text-fill: #eaf7ec;
+    -fx-font-weight: bold;
+}
+
+.toggle-eraser .box {
+    -fx-background-color: #1d3522;
+    -fx-border-color: #3d8451;
+    -fx-border-width: 2;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+}
+
+.toggle-eraser:selected .box {
+    -fx-background-color: linear-gradient(#ffda8b, #ffc24d);
+    -fx-border-color: #f5a623;
+}
+
+.toggle-eraser:selected .mark {
+    -fx-background-color: #3d2b00;
+}
+
+/********************
+ * SLIDER
+ ********************/
+.brush-slider {
+    -fx-padding: 0 4 0 4;
+}
+
+.slider .track {
+    -fx-background-color: linear-gradient(#163a22, #0f2818);
+    -fx-background-radius: 4;
+    -fx-padding: 0.25em;
+}
+
+.slider .thumb {
+    -fx-background-color:
+            radial-gradient(radius 70%, #42b56e, #1e6b3a);
+    -fx-background-radius: 12;
+    -fx-pref-width: 18;
+    -fx-pref-height: 18;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 6, 0.4, 0, 1);
+}
+
+.slider .thumb:hover {
+    -fx-background-color:
+            radial-gradient(radius 70%, #4fd17f, #238247);
+}
+
+/********************
+ * COLOR PICKER
+ ********************/
+.color-picker-custom {
+    -fx-background-color: linear-gradient(#174626, #133c20);
+    -fx-background-radius: 6;
+    -fx-border-color: #2d7a3a;
+    -fx-border-radius: 6;
+    -fx-padding: 2;
+}
+
+.color-picker-custom:hover {
+    -fx-border-color: #3fa556;
+}
+
+.color-picker-custom:focused {
+    -fx-effect: dropshadow(gaussian, rgba(63,165,86,0.65), 10, 0.3, 0, 0);
+}
+
+/********************
+ * CHAT / SIDE PANEL
+ ********************/
+.side-panel {
+    -fx-spacing: 6;
+    -fx-padding: 8 8 10 8;
+    -fx-background-color: linear-gradient(#13261a, #0f1e15);
+    -fx-border-color: #1f4d2c;
+    -fx-border-width: 0 0 0 2;
+}
+
+/* Chat input high-contrast styling */
+.chat-input {
+    -fx-background-color:
+            linear-gradient(#253c2f, #203329);
+    -fx-background-radius: 8;
+    -fx-border-color: #3d8451;
+    -fx-border-width: 2;
+    -fx-border-radius: 8;
+    -fx-text-fill: #f2fff4;              /* Typed text color */
+    -fx-prompt-text-fill: rgba(240,255,240,0.45);
+    -fx-highlight-fill: #3da863;         /* Selection background */
+    -fx-highlight-text-fill: #ffffff;    /* Selection text */
+    -fx-caret-color: #6af28a;            /* Caret color */
+    -fx-font-weight: bold;
+    -fx-padding: 6 10;
+}
+
+/* Stronger selector in case inline or theme overrides persisted */
+.text-field.chat-input {
+    -fx-text-fill: #f2fff4;
+}
+
+/* Focus ring / glow for chat input */
+.chat-input:focused {
+    -fx-border-color: #58c976;
+    -fx-effect: dropshadow(gaussian, rgba(88,201,118,0.55), 12, 0.3, 0, 0);
+}
+
+/* Chat area readability (if also looking washed out) */
+.chat-area {
+    -fx-control-inner-background: #05401d;
+    -fx-background-color: #121d16;
+    -fx-text-fill: #e8f5e9;
+    -fx-prompt-text-fill: rgba(255,255,255,0.35);
+    -fx-highlight-fill: #31874a;
+    -fx-highlight-text-fill: white;
+    -fx-border-color: #2e5d3a;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+}
+
+/* Ensure scroll-pane inside TextArea doesn't inject a light background */
+.chat-area .scroll-pane,
+.chat-area .scroll-pane .viewport,
+.chat-area .content {
+    -fx-background-color: #121d16;
+}
+
+/********************
+ * SEPARATORS
+ ********************/
+.h-separator .line {
+    -fx-background-color: rgba(255,255,255,0.12);
+    -fx-padding: 1 0 1 0;
+}
+
+/********************
+ * STATUS BAR
+ ********************/
+.status-bar {
+    -fx-background-color: linear-gradient(#13351f, #0e2619);
+    -fx-padding: 4 10 6 0;
+    -fx-spacing: 12;
+    -fx-alignment: CENTER_LEFT;
+    -fx-border-color: #1f5a30;
+    -fx-border-width: 2 0 0 0;
+}
+
+/********************
+ * FOCUS RINGS (ACCESSIBILITY)
+ ********************/
+.button:focused,
+.toggle-eraser:focused,
+.color-picker-custom:focused,
+.brush-slider:focused {
+    -fx-effect: dropshadow(gaussian, rgba(90,220,130,0.55), 14, 0.35, 0, 0);
+}
+
+/********************
+ * OPTIONAL: DISABLE STATES
+ ********************/
+.button:disabled,
+.toggle-eraser:disabled {
+    -fx-opacity: 0.45;
+    -fx-effect: none;
+}

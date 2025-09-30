@@ -126,6 +126,16 @@ public class CanvasController {
 
     public void onExit() { System.exit(0); }
 
+    public void onSave() {
+        try {
+            String path = "/Desktop/paint2.png";
+            Image snapshot = canvas.snapshot(null, null);
+          //   ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), "png", new File(path));
+        } catch (Exception e) {
+            System.out.println("Failed to save image: " + e);
+        }
+    }
+
     public Thread setTimer(int duration){
         Thread t=new Thread(() -> {
             try {
