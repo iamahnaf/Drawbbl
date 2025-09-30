@@ -15,7 +15,7 @@ public class Canva extends Application {
     public void start(Stage stage) throws Exception {
         Server.getWords();
         Server.getStartHandler();
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("canva_layout.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("canva.fxml"));
         Parent root = loader.load();
         controller = loader.getController();
 

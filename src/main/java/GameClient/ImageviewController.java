@@ -62,6 +62,7 @@ public class ImageviewController {
     }
 
     public void onExit() {
+
         System.exit(0);
     }
 

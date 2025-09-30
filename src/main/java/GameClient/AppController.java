@@ -91,6 +91,7 @@ public class AppController {
                     alert.showAndWait();
                 });
                 System.out.println("Server not found..");
+
             }
         }).start();
     }
