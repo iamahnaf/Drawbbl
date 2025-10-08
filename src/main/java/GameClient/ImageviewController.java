@@ -9,6 +9,7 @@ import javafx.scene.paint.Color; // NEW IMPORT
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import javafx.scene.shape.StrokeLineCap; // NEW IMPORT
 
 import static java.lang.Thread.sleep;
 
@@ -33,7 +34,7 @@ public class ImageviewController {
     // The 'onSave' method will no longer work as easily without an ImageView,
     // but you can snapshot the canvas if you need to re-implement it.
     public void onSave() {
-        System.out.println("Saving Image.... ");
+        System.out.println("Saving Image.... (feature needs update for canvas)");
     }
 
     public void onMessage() {
@@ -62,7 +63,6 @@ public class ImageviewController {
     }
 
     public void onExit() {
-
         System.exit(0);
     }
 
@@ -104,8 +104,10 @@ public class ImageviewController {
         drawingIn = player.drawingIn; // Get the drawing input stream
         playerDisplay.setText("PLAYER: " + player.username);
 
-        // NEW: Initialize GraphicsContext
+        // MODIFIED: Initialize GraphicsContext with rounded lines
         g = canvas.getGraphicsContext2D();
+        g.setLineCap(StrokeLineCap.ROUND);
+
 
         dOut.writeBoolean(true);
         dOut.flush();   //player ready==true
@@ -133,20 +135,31 @@ public class ImageviewController {
         }).start();
     }
 
-    // NEW: This method executes the drawing command based on the action type
+    // MODIFIED: This method now handles line drawing
     private void processDrawingAction(DrawingAction action) {
-        double x = action.getX();
-        double y = action.getY();
+        double fromX = action.getFromX();
+        double fromY = action.getFromY();
+        double toX = action.getToX();
+        double toY = action.getToY();
         double size = action.getSize();
 
         switch (action.getType()) {
-            case DRAW:
+            case BEGIN_PATH:
+                // For a new path, we just set the line properties
+                g.setLineWidth(size);
                 DrawingAction.SerializableColor sColor = action.getColor();
-                g.setFill(new Color(sColor.getRed(), sColor.getGreen(), sColor.getBlue(), sColor.getOpacity()));
-                g.fillOval(x - size / 2, y - size / 2, size, size);
+                g.setStroke(new Color(sColor.getRed(), sColor.getGreen(), sColor.getBlue(), sColor.getOpacity()));
+                break;
+            case MOVE:
+                // For a move, we draw a line from the last point to the new one
+                g.setLineWidth(size);
+                DrawingAction.SerializableColor moveColor = action.getColor();
+                g.setStroke(new Color(moveColor.getRed(), moveColor.getGreen(), moveColor.getBlue(), moveColor.getOpacity()));
+                g.strokeLine(fromX, fromY, toX, toY);
                 break;
             case ERASE:
-                g.clearRect(x - size / 2, y - size / 2, size, size);
+                // Erasing still works by clearing small rectangles
+                g.clearRect(toX - size / 2, toY - size / 2, size, size);
                 break;
             case CLEAR:
                 g.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());

@@ -11,11 +11,12 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color; // Import JavaFX Color
 
-//import javax.imageio.ImageIO;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import javafx.scene.shape.StrokeLineCap; // NEW IMPORT
 
 import static java.lang.Thread.sleep;
 
@@ -38,6 +39,9 @@ public class CanvasController {
     private Label displayTimer, wordLabel;
     private GraphicsContext g;
 
+    // NEW: Variables to store the last mouse position
+    private double lastX, lastY;
+
     File newFile = new File("cursor.png");
     private final Image penCursor = new Image(newFile.toURI().toString());
     private CheckStatus checker = new CheckStatus();
@@ -46,36 +50,63 @@ public class CanvasController {
     public void initialize() {
         new Thread(this::gameHandler).start();
 
-        brushSize.setMax(50);
+        brushSize.setMax(100);
         brushSize.setValue(8);
         g = canvas.getGraphicsContext2D();
+        g.setLineCap(StrokeLineCap.ROUND);  // Makes lines look smoother
         canvas.setCursor(new ImageCursor(penCursor, 0, penCursor.getHeight()));
         list.setWrapText(true);
 
-        // MODIFIED: Send drawing actions on mouse drag
-        canvas.setOnMouseDragged(e -> {
-            double size = brushSize.getValue();
-            double x = e.getX();
-            double y = e.getY();
+        // NEW: Handle the start of a drawing path
+        canvas.setOnMousePressed(e -> {
+            lastX = e.getX();
+            lastY = e.getY();
 
+            double size = brushSize.getValue();
             DrawingAction action;
+
             if (eraser.isSelected()) {
-                g.clearRect(x, y, size, size);
-                action = new DrawingAction(DrawingAction.ActionType.ERASE, e.getX(), e.getY(), size, null);
+                g.clearRect(lastX - size / 2, lastY - size / 2, size, size);
+                action = new DrawingAction(DrawingAction.ActionType.ERASE, lastX, lastY, lastX, lastY, size, null);
             } else {
-                g.setFill(colorPicker.getValue());
-                g.fillOval(x, y, size, size);
-                Color color = colorPicker.getValue();
-                DrawingAction.SerializableColor serializableColor = new DrawingAction.SerializableColor(color.getRed(), color.getGreen(), color.getBlue(), color.getOpacity());
-                action = new DrawingAction(DrawingAction.ActionType.DRAW, e.getX(), e.getY(), size, serializableColor);
+                g.setStroke(colorPicker.getValue());
+                g.setLineWidth(size);
+                // We don't draw anything here, just begin the path
+                action = new DrawingAction(DrawingAction.ActionType.BEGIN_PATH, lastX, lastY, lastX, lastY, size, getSerializableColor());
             }
             sendDrawingAction(action);
         });
 
-        // REMOVED: No longer need to send image on mouse click.
-        // canvas.setOnMouseClicked(...)
+        // MODIFIED: This now draws lines to connect the dots
+        canvas.setOnMouseDragged(e -> {
+            double size = brushSize.getValue();
+            double currentX = e.getX();
+            double currentY = e.getY();
+            DrawingAction action;
+
+            if (eraser.isSelected()) {
+                g.clearRect(currentX - size / 2, currentY - size / 2, size, size);
+                action = new DrawingAction(DrawingAction.ActionType.ERASE, lastX, lastY, currentX, currentY, size, null);
+            } else {
+                g.setStroke(colorPicker.getValue());
+                g.setLineWidth(size);
+                g.strokeLine(lastX, lastY, currentX, currentY);
+                action = new DrawingAction(DrawingAction.ActionType.MOVE, lastX, lastY, currentX, currentY, size, getSerializableColor());
+            }
+
+            // Update the last position
+            lastX = currentX;
+            lastY = currentY;
+
+            sendDrawingAction(action);
+        });
 
         clear.setOnAction(e -> ClearCanvas());
+    }
+    // NEW: Helper method to get the serializable color
+    private DrawingAction.SerializableColor getSerializableColor() {
+        Color color = colorPicker.getValue();
+        return new DrawingAction.SerializableColor(color.getRed(), color.getGreen(), color.getBlue(), color.getOpacity());
     }
 
     public void ClearCanvas() {
@@ -103,13 +134,17 @@ public class CanvasController {
         }
     }
 
-
+    // DELETED: The sendImage method is no longer needed.
+    // public void sendImage(Image im){ ... }
 
     // ... (rest of the class remains the same)
     public void setWord(String word){
         wordLabel.setText("Draw this : "+word);
     }
 
+    public void onSave() {
+        System.out.println("Saving image...");
+    }
 
     public void onMessage() {
         message.setOnAction(e -> {
@@ -125,16 +160,6 @@ public class CanvasController {
     }
 
     public void onExit() { System.exit(0); }
-
-    public void onSave() {
-        try {
-            String path = "/Desktop/paint2.png";
-            Image snapshot = canvas.snapshot(null, null);
-          //   ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), "png", new File(path));
-        } catch (Exception e) {
-            System.out.println("Failed to save image: " + e);
-        }
-    }
 
     public Thread setTimer(int duration){
         Thread t=new Thread(() -> {

@@ -7,26 +7,33 @@ import java.io.Serializable;
  * This object will be sent from the server to clients.
  */
 public class DrawingAction implements Serializable {
-    // A unique version ID for serialization
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L; // Changed version UID
 
     public enum ActionType {
-        DRAW,
+        // Renamed DRAW to MOVE, and added BEGIN_PATH for clarity
+        BEGIN_PATH, // Action for when the mouse is first pressed
+        MOVE,       // Action for when the mouse is dragged
         ERASE,
         CLEAR
     }
 
     private final ActionType type;
-    private final double x;
-    private final double y;
+    // 'from' coordinates for the start of a line segment
+    private final double fromX;
+    private final double fromY;
+    // 'to' coordinates for the end of a line segment
+    private final double toX;
+    private final double toY;
     private final double size;
     private final SerializableColor color;
 
-    // Constructor for DRAW and ERASE actions
-    public DrawingAction(ActionType type, double x, double y, double size, SerializableColor color) {
+    // Constructor for MOVE, BEGIN_PATH, and ERASE actions
+    public DrawingAction(ActionType type, double fromX, double fromY, double toX, double toY, double size, SerializableColor color) {
         this.type = type;
-        this.x = x;
-        this.y = y;
+        this.fromX = fromX;
+        this.fromY = fromY;
+        this.toX = toX;
+        this.toY = toY;
         this.size = size;
         this.color = color;
     }
@@ -34,16 +41,17 @@ public class DrawingAction implements Serializable {
     // Constructor for CLEAR action
     public DrawingAction() {
         this.type = ActionType.CLEAR;
-        this.x = 0;
-        this.y = 0;
-        this.size = 0;
-        this.color = null;
+        this.fromX = 0; this.fromY = 0;
+        this.toX = 0; this.toY = 0;
+        this.size = 0; this.color = null;
     }
 
     // Getters for all fields
     public ActionType getType() { return type; }
-    public double getX() { return x; }
-    public double getY() { return y; }
+    public double getFromX() { return fromX; }
+    public double getFromY() { return fromY; }
+    public double getToX() { return toX; }
+    public double getToY() { return toY; }
     public double getSize() { return size; }
     public SerializableColor getColor() { return color; }
 
