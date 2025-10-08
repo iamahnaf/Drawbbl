@@ -103,7 +103,7 @@ public class CanvasController {
 
         clear.setOnAction(e -> ClearCanvas());
     }
-    // NEW: Helper method to get the serializable color
+    //Helper method to get the serializable color
     private DrawingAction.SerializableColor getSerializableColor() {
         Color color = colorPicker.getValue();
         return new DrawingAction.SerializableColor(color.getRed(), color.getGreen(), color.getBlue(), color.getOpacity());
@@ -111,16 +111,10 @@ public class CanvasController {
 
     public void ClearCanvas() {
         g.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        // MODIFIED: Send a CLEAR action instead of an image.
         sendDrawingAction(new DrawingAction());
     }
 
 
-    // --- MODIFICATION START ---
-    //
-    // The `synchronized` keyword ensures only one thread can execute this method at a time,
-    // preventing the output stream from being corrupted by multiple simultaneous writes.
-    // Also removed the unnecessary creation of a new thread for every action.
     public synchronized void sendDrawingAction(DrawingAction action) {
         try {
             for (ObjectOutputStream oos : Server.drawingOut) {
@@ -134,10 +128,7 @@ public class CanvasController {
         }
     }
 
-    // DELETED: The sendImage method is no longer needed.
-    // public void sendImage(Image im){ ... }
 
-    // ... (rest of the class remains the same)
     public void setWord(String word){
         wordLabel.setText("Draw this : "+word);
     }

@@ -22,7 +22,7 @@ public class Server extends Application{
     static ArrayList<Socket> socketList=new ArrayList<>();
     public static ArrayList<ObjectOutputStream> oosList=new ArrayList<>();
     public static ArrayList<ObjectInputStream> oisList=new ArrayList<>();
-    // MODIFIED: This list now holds ObjectOutputStreams for sending DrawingAction objects.
+    // ObjectOutputStreams for sending DrawingAction objects.
     public static ArrayList<ObjectOutputStream> drawingOut=new ArrayList<>();
 
     public static int playerCount=2;
@@ -82,7 +82,6 @@ public class Server extends Application{
             pool.execute(sThread);
         }
         pool.shutdown();
-        // MODIFICATION START
         // Replace pool.awaitTermination(10, TimeUnit.SECONDS); with a manual wait loop.
         long timeout = 10000; // 10 seconds in milliseconds
         long end_time = System.currentTimeMillis() + timeout;
@@ -103,8 +102,6 @@ public class Server extends Application{
                 break;
             }
         }
-        // MODIFICATION END
-
         System.out.println("StartHandler Closed..");
     }
 
