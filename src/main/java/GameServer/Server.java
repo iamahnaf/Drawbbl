@@ -13,7 +13,7 @@ import java.util.Locale;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+//import java.util.concurrent.TimeUnit;
 
 
 public class Server extends Application{
@@ -82,7 +82,29 @@ public class Server extends Application{
             pool.execute(sThread);
         }
         pool.shutdown();
-        pool.awaitTermination(10, TimeUnit.SECONDS);
+        // MODIFICATION START
+        // Replace pool.awaitTermination(10, TimeUnit.SECONDS); with a manual wait loop.
+        long timeout = 10000; // 10 seconds in milliseconds
+        long end_time = System.currentTimeMillis() + timeout;
+
+        while(!pool.isTerminated()) {
+            if (System.currentTimeMillis() >= end_time) {
+                System.err.println("Timeout elapsed while waiting for pool to terminate. Forcing shutdown.");
+                pool.shutdownNow(); // Force shutdown of running tasks
+                break;
+            }
+            try {
+                // Wait for a short interval before checking again to avoid busy-waiting
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                System.err.println("Interrupted while waiting for pool to terminate.");
+                pool.shutdownNow();
+                Thread.currentThread().interrupt(); // Preserve the interrupted status
+                break;
+            }
+        }
+        // MODIFICATION END
+
         System.out.println("StartHandler Closed..");
     }
 
