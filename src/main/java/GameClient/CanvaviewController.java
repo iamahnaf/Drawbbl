@@ -13,7 +13,7 @@ import javafx.scene.shape.StrokeLineCap; // NEW IMPORT
 
 import static java.lang.Thread.sleep;
 
-public class ImageviewController {
+public class CanvaviewController {
     // MODIFIED: Replaced ImageView with Canvas
     @FXML
     private Canvas canvas;

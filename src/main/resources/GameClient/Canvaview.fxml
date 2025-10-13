@@ -7,7 +7,7 @@
 <?import javafx.scene.text.*?>
 
 <?import javafx.scene.canvas.Canvas?>
-<BorderPane prefHeight="700.0" prefWidth="900.0" style="-fx-background-color: #cce6ff;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GameClient.ImageviewController">
+<BorderPane prefHeight="700.0" prefWidth="900.0" style="-fx-background-color: #cce6ff;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GameClient.CanvaviewController">
     <top>
         <VBox prefHeight="70.0" prefWidth="800.0" style="-fx-background-color: #003366;">
             <MenuBar>

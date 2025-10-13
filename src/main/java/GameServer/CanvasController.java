@@ -224,7 +224,55 @@ public class CanvasController {
 
         }
     }
+    // Replace the existing gamePlay method in CanvasController.java with this one.
+    public void gamePlay(int pnum, String word, Thread timer) {
+        String pname = Server.names.get(pnum);
+        try {
+            ObjectInputStream ois = Server.oisList.get(pnum);
+            boolean answered = false;
+            while (timer.isAlive()) {
+                String guess = (String) ois.readObject();
+                if (guess.equals("IM_DONE_GUESSING")) break;
 
+                Platform.runLater(() -> list.appendText(pname + ": " + guess + "\n"));
+                String lowerCaseGuess = guess.toLowerCase();
+
+                // 1. Check for an exact match
+                if (word.equals(lowerCaseGuess)) {
+                    int score = Server.scoreList.get(pnum);
+                    if (!answered && timer.isAlive()) {
+                        Server.scoreList.set(pnum, score + 10);
+                        sendResOut(pname + ": Got it Correct!");
+                        answered = true;
+                    } else {
+                        // Send a private message if they have already answered correctly
+                        sendPrivateMessage(pnum, "SERVER: You already answered correctly!");
+                    }
+                }
+                // 2. If not an exact match, check the edit distance
+                else if (LevenshteinDistance.calculate(word, lowerCaseGuess) == 1) {
+                    if (!answered) {
+                        // Send the "close" message privately to the guesser
+                        sendPrivateMessage(pnum, "SERVER: You are very close!");
+                    }
+                    // Also send the regular (incorrect) guess to everyone else,
+                    // including the original guesser so they see what they typed.
+                    sendResOut(pname + ": " + guess);
+                }
+                // 3. If it's just a wrong guess
+                else {
+                    sendResOut(pname + ": " + guess);
+                }
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            try {
+                checker.checkPresence();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        }
+    }
+ /*
     public void gamePlay(int pnum,String word,Thread timer){
         String pname=Server.names.get(pnum);
         try {
@@ -252,7 +300,7 @@ public class CanvasController {
             } catch (IOException ioException) { ioException.printStackTrace(); }
         }
     }
-
+   */
     public synchronized void sendResOut(String res) throws IOException {
         for(ObjectOutputStream oos:Server.oosList){
             oos.writeObject(res);
@@ -281,4 +329,17 @@ public class CanvasController {
         }
         return wl.toString();
     }
+
+    public synchronized void sendPrivateMessage(int playerIndex, String message) {
+        try {
+            if (playerIndex >= 0 && playerIndex < Server.oosList.size()) {
+                ObjectOutputStream oos = Server.oosList.get(playerIndex);
+                oos.writeObject(message);
+                oos.flush();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

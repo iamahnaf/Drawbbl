@@ -63,10 +63,10 @@ public class LobbyController {
 
     public void nextScene(){
         try {
-            FXMLLoader loader=new FXMLLoader(getClass().getResource("imageview.fxml"));
+            FXMLLoader loader=new FXMLLoader(getClass().getResource("Canvaview.fxml"));
             Parent root=loader.load();
 
-            ImageviewController controller = loader.getController();
+            CanvaviewController controller = loader.getController();
             controller.setUserData(player);
 
             Stage stage = (Stage) displayTimer.getScene().getWindow();
