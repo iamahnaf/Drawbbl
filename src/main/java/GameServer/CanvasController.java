@@ -237,39 +237,28 @@ public class CanvasController {
                 Platform.runLater(() -> list.appendText(pname + ": " + guess + "\n"));
                 String lowerCaseGuess = guess.toLowerCase();
 
-                // 1. Check for an exact match
                 if (word.equals(lowerCaseGuess)) {
                     int score = Server.scoreList.get(pnum);
                     if (!answered && timer.isAlive()) {
                         Server.scoreList.set(pnum, score + 10);
-                        sendResOut(pname + ": Got it Correct!");
+                        // ADD a prefix for correct answers
+                        sendResOut("STYLE_GREEN:" + pname + " guessed the word!");
                         answered = true;
                     } else {
-                        // Send a private message if they have already answered correctly
-                        sendPrivateMessage(pnum, "SERVER: You already answered correctly!");
+                        sendPrivateMessage(pnum, "You already answered correctly!");
                     }
-                }
-                // 2. If not an exact match, check the edit distance
-                else if (LevenshteinDistance.calculate(word, lowerCaseGuess) == 1) {
+                } else if (LevenshteinDistance.calculate(word, lowerCaseGuess) == 1) {
                     if (!answered) {
-                        // Send the "close" message privately to the guesser
-                        sendPrivateMessage(pnum, "SERVER: You are very close!");
+                        // ADD a prefix for "close" hints
+                        sendPrivateMessage(pnum, "STYLE_YELLOW:"+lowerCaseGuess+" is close!");
                     }
-                    // Also send the regular (incorrect) guess to everyone else,
-                    // including the original guesser so they see what they typed.
-                    sendResOut(pname + ": " + guess);
-                }
-                // 3. If it's just a wrong guess
-                else {
+                   // sendResOut(pname + ": " + guess);
+                } else {
                     sendResOut(pname + ": " + guess);
                 }
             }
         } catch (IOException | ClassNotFoundException e) {
-            try {
-                checker.checkPresence();
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
-            }
+            // ...
         }
     }
  /*

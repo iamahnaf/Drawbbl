@@ -45,10 +45,12 @@
     <right>
         <VBox prefHeight="600.0" prefWidth="280.0" style="-fx-background-color: #ffebe6;" BorderPane.alignment="CENTER">
             <children>
-                <TextArea fx:id="list" editable="false" prefHeight="557.0" prefWidth="275.0" promptText="guesses" style="-fx-background-color: #ffebe6;" wrapText="true">
-                    <font>
-                        <Font name="Tlwg Mono Bold" size="15.0" />
-                    </font></TextArea>
+                <!-- THIS IS THE NEW CODE YOU SHOULD PUT IN ITS PLACE -->
+                <ScrollPane fx:id="chatScrollPane" fitToWidth="true" prefHeight="557.0" prefWidth="275.0" style="-fx-background-color: #ffebe6;">
+                    <content>
+                        <TextFlow fx:id="chatTextFlow" style="-fx-background-color: #ffebe6;" />
+                    </content>
+                </ScrollPane>
                 <Separator prefWidth="275.0" />
                 <TextField fx:id="message" onAction="#onMessage" promptText="guess here" style="-fx-background-color: #ffc2b3;">
                     <font>

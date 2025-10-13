@@ -10,6 +10,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import javafx.scene.shape.StrokeLineCap; // NEW IMPORT
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 
 import static java.lang.Thread.sleep;
 
@@ -19,10 +23,14 @@ public class CanvaviewController {
     private Canvas canvas;
     @FXML
     private TextField message;
-    @FXML
-    private TextArea list;
+    //@FXML
+    //private TextArea list;
     @FXML
     private Label displayTimer, playerDisplay, serverLabel;
+    @FXML
+    private ScrollPane chatScrollPane;
+    @FXML
+    private TextFlow chatTextFlow;
 
     private GraphicsContext g; // NEW: GraphicsContext for the canvas
     private UserData player;
@@ -108,6 +116,11 @@ public class CanvaviewController {
         g = canvas.getGraphicsContext2D();
         g.setLineCap(StrokeLineCap.ROUND);
 
+        // Add a listener to make the chat scroll down automatically
+        chatTextFlow.heightProperty().addListener((observable, oldValue, newValue) -> {
+            chatScrollPane.setVvalue(1.0);
+        });
+
 
         dOut.writeBoolean(true);
         dOut.flush();   //player ready==true
@@ -115,6 +128,53 @@ public class CanvaviewController {
         drawingActionReceiver(); // Start the new receiver
         allResponses();
     }
+// In CanvaviewController.java
+// --- THIS IS THE FULLY CORRECTED METHOD ---
+private void appendStyledText(String rawMessage) {
+    String message = rawMessage;
+    Color messageColor = Color.BLACK; // Default color
+
+    // --- 1. Check for special color prefixes and strip them ---
+    if (message.startsWith("STYLE_YELLOW:")) {
+        message = message.substring("STYLE_YELLOW:".length());
+        messageColor = Color.ORANGE;
+    } else if (message.startsWith("STYLE_GREEN:")) {
+        message = message.substring("STYLE_GREEN:".length());
+        messageColor = Color.LIMEGREEN;
+    }
+
+    // --- 2. Split the message into speaker and content ---
+    int colonIndex = message.indexOf(":");
+
+    // Case 1: It's a player/server message like "Aran: mat" or a special message with a name
+    if (colonIndex > 0) {
+        String speaker = message.substring(0, colonIndex);
+        String content = message.substring(colonIndex); // Includes the ":"
+
+        Text speakerText = new Text(speaker);
+        speakerText.setFont(Font.font("Tlwg Mono", FontWeight.BOLD, 15)); // Set font to BOLD
+        speakerText.setFill(messageColor);
+
+        Text contentText = new Text(content);
+        contentText.setFont(Font.font("Tlwg Mono", FontWeight.NORMAL, 15)); // Set font to NORMAL
+        contentText.setFill(messageColor);
+
+        chatTextFlow.getChildren().addAll(speakerText, contentText, new Text("\n"));
+    }
+    // Case 2: It's a system message or a special message without a colon
+    else {
+        Text systemText = new Text(message);
+        systemText.setFont(Font.font("Tlwg Mono", FontWeight.BOLD, 15)); // Make the whole message bold
+        systemText.setFill(messageColor); // Use the determined color
+
+        // For general system messages without a color prefix, make them gray
+        if (messageColor == Color.BLACK) {
+            systemText.setFill(Color.GRAY);
+        }
+
+        chatTextFlow.getChildren().addAll(systemText, new Text("\n"));
+    }
+}
 
     // REWRITTEN: This method now receives and processes DrawingAction objects
     public void drawingActionReceiver() {
@@ -198,7 +258,9 @@ public class CanvaviewController {
                         timer.join();
                         player.server.close();
                         System.exit(0);
-                    } else Platform.runLater(()->list.appendText(res+"\n"));
+                    } else {
+                        Platform.runLater(()-> appendStyledText(res));
+                    }
                 }
             } catch (IOException | ClassNotFoundException | InterruptedException e) { e.printStackTrace(); }
         });
