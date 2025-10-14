@@ -230,7 +230,6 @@ private void appendStyledText(String rawMessage) {
     // DELETED: The old imageReceiver method is no longer needed.
     // public void imageReceiver() { ... }
 
-    // ... (allResponses method is unchanged) ...
     public void allResponses(){
         Thread allres=new Thread(() -> {
             Thread timer=setTimer(0);
