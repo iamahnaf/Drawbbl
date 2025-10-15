@@ -59,7 +59,7 @@ public class AppController {
         joinButton.setDisable(true);
         name.setDisable(true);
         ip.setDisable(true);
-       // title.setText("Connecting...");
+
 
         // --- Perform networking in a background thread ---
         new Thread(() -> {
@@ -90,8 +90,7 @@ public class AppController {
                     alert.setContentText("No server running at the entered IP address\nPlease recheck it and try again.");
                     alert.showAndWait();
                 });
-                System.out.println("Server not found..");
-
+                System.out.println("Server not found....");
             }
         }).start();
     }

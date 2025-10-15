@@ -252,7 +252,7 @@ public class CanvasController {
                         // ADD a prefix for "close" hints
                         sendPrivateMessage(pnum, "STYLE_YELLOW:"+lowerCaseGuess+" is close!");
                     }
-                   // sendResOut(pname + ": " + guess);
+                   sendResOut(pname + ": " + guess);
                 } else {
                     sendResOut(pname + ": " + guess);
                 }
