@@ -27,6 +27,7 @@ public class Server extends Application{
 
     public static int playerCount=2;
     public static int rounds=3;
+    public static volatile int correctGuessCount = 0;
 
     public static ArrayList<String> names=new ArrayList<>();
     public static ArrayList<Integer> scoreList=new ArrayList<>();
