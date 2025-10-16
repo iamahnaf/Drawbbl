@@ -84,7 +84,11 @@ public class CanvaviewController {
                     sleep(1000);
                 }
                 Platform.runLater(() -> displayTimer.setText("Timer: "+0));
-            } catch (InterruptedException e) { e.printStackTrace(); }
+            } catch (InterruptedException e) {
+                // MODIFICATION: This is expected. Just print a clean message and exit the thread.
+                System.out.println("Client timer interrupted.");
+                Thread.currentThread().interrupt();
+            }
         });
         t.start();
         return t;
@@ -99,7 +103,11 @@ public class CanvaviewController {
                     sleep(1000);
                 }
                 Platform.runLater(() -> displayTimer.setText("Next Round in: "+0));
-            } catch (InterruptedException e) { e.printStackTrace(); }
+            } catch (InterruptedException e) {
+                //MODIFICATION: This is expected. Just print a clean message and exit the thread.
+                        System.out.println("Client wait timer interrupted.");
+                Thread.currentThread().interrupt();
+            }
         });
         t.start();
         return t;
@@ -184,13 +192,34 @@ private void appendStyledText(String rawMessage) {
                     // Read the DrawingAction object from the stream
                     DrawingAction action = (DrawingAction) drawingIn.readObject();
 
+                    // --- MODIFICATION: Check for the shutdown command ---
+                    if (action.getType() == DrawingAction.ActionType.SHUTDOWN) {
+                        System.out.println("Received shutdown command from server. Closing drawing receiver.");
+                        gameOver = true; // This will cause the loop to terminate
+                        continue; // Skip processing and let the loop exit
+                    }
+                    // --- END MODIFICATION ---
+
                     // Use Platform.runLater to update the UI from this thread
                     Platform.runLater(() -> processDrawingAction(action));
                 }
                 drawingIn.close();
                 player.drawingSocket.close();
             } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
+                // This is now the ONLY place a connection error should happen during normal play.
+                // If the server crashes unexpectedly, this will catch it.
+                if (!gameOver) { // Only print if we weren't expecting the game to end.
+                    System.err.println("Connection to server lost.");
+                    e.printStackTrace();
+                }
+            } finally {
+                // Cleanly close the sockets when the loop is done.
+                try {
+                    if (drawingIn != null) drawingIn.close();
+                    if (player.drawingSocket != null) player.drawingSocket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }).start();
     }
@@ -237,16 +266,27 @@ private void appendStyledText(String rawMessage) {
                 while(true){
                     String res = (String) dIn.readObject();
                     if(res.startsWith("Round: ")){
+                        if (timer.isAlive()) {
+                            timer.interrupt();
+                        }
                         timer.join();
                         timer = setTimer(90);
                         Platform.runLater(()->serverLabel.setText(res));
                     } else if(res.equals("ROUND OVER")) {
-                        timer.join();
+                        // --- THIS IS THE FIX ---
+                        // The round is over, so we must interrupt our own timer instead of waiting for it.
+                        if (timer.isAlive()) {
+                            timer.interrupt();
+                        }
+                        timer.join(); // Wait for the (now interrupted) timer to die.
                         tellServer("IM_DONE_GUESSING");
                         String ans=(String) dIn.readObject();
                         Platform.runLater(()->serverLabel.setText(ans));
                         timer = setWaitTimer(15);
                     } else if(res.equals("GAME OVER")) {
+                        if (timer.isAlive()) {
+                            timer.interrupt();
+                        }
                         timer.join();
                         String ans=(String) dIn.readObject();
                         Platform.runLater(()->serverLabel.setText(ans));

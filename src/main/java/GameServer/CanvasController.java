@@ -161,7 +161,11 @@ public class CanvasController {
                     sleep(1000);
                 }
                 Platform.runLater(() -> displayTimer.setText("Timer: "+0));
-            } catch (InterruptedException e) { e.printStackTrace(); }
+            } catch (InterruptedException e) {
+                // MODIFICATION: This is expected. Just print a clean message and exit the thread.
+                System.out.println("Server timer interrupted, finishing early.");
+                Thread.currentThread().interrupt(); // Preserve the interrupted status
+            }
         });
         t.start();
         return t;
@@ -176,7 +180,11 @@ public class CanvasController {
                     sleep(1000);
                 }
                 Platform.runLater(() -> displayTimer.setText("Next Round in: "+0));
-            } catch (InterruptedException e) { e.printStackTrace(); }
+            } catch (InterruptedException e) {
+                // MODIFICATION: This is expected. Just print a clean message and exit the thread.
+                System.out.println("Server wait timer interrupted.");
+                Thread.currentThread().interrupt(); // Preserve the interrupted status
+            }
         });
         t.start();
         return t;
@@ -186,7 +194,8 @@ public class CanvasController {
         int pc=Server.playerCount;
 
         for(int round=1 ; round<=Server.rounds ; round++) {
-
+           // RESET THE COUNTER AT THE START OF EACH ROUND ---
+            Server.correctGuessCount = 0;
             Platform.runLater(this::ClearCanvas);
             System.out.print("GameHandler round: " + round);
             String word = Server.words.get((int) (Math.random() * Server.words.size()));
@@ -201,7 +210,8 @@ public class CanvasController {
             Thread[] play=new Thread[pc];
             for(int pnum=0;pnum<pc;pnum++) {
                 int finalPnum = pnum;
-                play[pnum]=new Thread(()->gamePlay(finalPnum,word,timer));
+                // Pass the 'play' array to the gamePlay method
+                play[pnum] = new Thread(() -> gamePlay(finalPnum, word, timer, play));
                 play[pnum].start();
             }
             try {
@@ -215,9 +225,19 @@ public class CanvasController {
                     waitTimer.join();
                 }
                 else {
-                    sendResOut("Winner:\n"+Server.getWinners());
+                    sendResOut("Winner:\n" + Server.getWinners());
                     sendResOut("GAME OVER");
-                    sendResOut("Round: "+round+"   word: "+word);
+                    sendResOut("Round: " + round + "   word: " + word);
+
+                    // --- MODIFICATION START ---
+                    // Send a final shutdown command to all clients before exiting.
+                    sendDrawingAction(new DrawingAction(DrawingAction.ActionType.SHUTDOWN, 0, 0, 0, 0, 0, null));
+                    // Give a brief moment for the message to be sent.
+                    try {
+                        sleep(100);
+                    } catch (InterruptedException ignored) {}
+                    // --- MODIFICATION END ---
+
                     System.exit(0);
                 }
             } catch (InterruptedException | IOException e) { e.printStackTrace(); }
@@ -225,7 +245,7 @@ public class CanvasController {
         }
     }
     // Replace the existing gamePlay method in CanvasController.java with this one.
-    public void gamePlay(int pnum, String word, Thread timer) {
+    public void gamePlay(int pnum, String word, Thread timer, Thread[] playerThreads) {
         String pname = Server.names.get(pnum);
         try {
             ObjectInputStream ois = Server.oisList.get(pnum);
@@ -244,6 +264,8 @@ public class CanvasController {
                         // ADD a prefix for correct answers
                         sendResOut("STYLE_GREEN:" + pname + " guessed the word!");
                         answered = true;
+                        // --- 2. INCREMENT COUNTER AND CHECK IF ROUND IS OVER ---
+                        handleCorrectGuess(timer, playerThreads);
                     } else {
                         sendPrivateMessage(pnum, "You already answered correctly!");
                     }
@@ -258,7 +280,7 @@ public class CanvasController {
                 }
             }
         } catch (IOException | ClassNotFoundException e) {
-            // ...
+            System.out.println(e.getMessage());
         }
     }
  /*
@@ -328,6 +350,26 @@ public class CanvasController {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    // Add 'Thread[] playerThreads' as a parameter to this method
+    private synchronized void handleCorrectGuess(Thread timer, Thread[] playerThreads) {
+        Server.correctGuessCount++;
+        if (Server.correctGuessCount == Server.playerCount) {
+            System.out.println("\nAll players guessed correctly! Ending round early.");
+
+            // Interrupt the main timer
+            if (timer.isAlive()) {
+                timer.interrupt();
+            }
+
+            // NEW: Interrupt all the player threads to break them out of their loops
+            for (Thread playerThread : playerThreads) {
+                if (playerThread != null && playerThread.isAlive()) {
+                    playerThread.interrupt();
+                }
+            }
         }
     }
 

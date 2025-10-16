@@ -14,7 +14,8 @@ public class DrawingAction implements Serializable {
         BEGIN_PATH, // Action for when the mouse is first pressed
         MOVE,       // Action for when the mouse is dragged
         ERASE,
-        CLEAR
+        CLEAR,
+        SHUTDOWN// new
     }
 
     private final ActionType type;
