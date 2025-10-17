@@ -206,7 +206,7 @@ public class CanvasController {
             } catch (IOException e) { e.printStackTrace(); }
 
             Platform.runLater(() -> setWord(word));
-            Thread timer=setTimer(90),waitTimer;
+            Thread timer=setTimer(60),waitTimer;
             Thread[] play=new Thread[pc];
             for(int pnum=0;pnum<pc;pnum++) {
                 int finalPnum = pnum;

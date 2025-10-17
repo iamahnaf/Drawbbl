@@ -55,7 +55,7 @@ public class Server extends Application{
 
     public static void getWords() {
         try{
-            File wordsFile=new File("word.txt");
+            File wordsFile=new File("csword.txt");
             System.out.println("file found: "+wordsFile.exists());
             Scanner sc=new Scanner(wordsFile);
             sc.useDelimiter(", ");
@@ -84,7 +84,7 @@ public class Server extends Application{
         }
         pool.shutdown();
         // Replace pool.awaitTermination(10, TimeUnit.SECONDS); with a manual wait loop.
-        long timeout = 10000; // 10 seconds in milliseconds
+        long timeout = 5000; // 10 seconds in milliseconds
         long end_time = System.currentTimeMillis() + timeout;
 
         while(!pool.isTerminated()) {

@@ -270,7 +270,7 @@ private void appendStyledText(String rawMessage) {
                             timer.interrupt();
                         }
                         timer.join();
-                        timer = setTimer(90);
+                        timer = setTimer(60);
                         Platform.runLater(()->serverLabel.setText(res));
                     } else if(res.equals("ROUND OVER")) {
                         // --- THIS IS THE FIX ---

@@ -37,7 +37,7 @@ public class LobbyController {
                     Platform.runLater(() -> playerList.appendText(finalI+". "+friend+"\n"));
                     System.out.println(i + ": " + friend);
                 }
-                setTimer(10);
+                setTimer(5);
             } catch (IOException | ClassNotFoundException e) {e.printStackTrace();}
         }).start();
     }
