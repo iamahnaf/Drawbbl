@@ -29,6 +29,10 @@ public class Server {
     public static int rounds=3;
     public static volatile int correctGuessCount = 0;
 
+    // Add the missing isGameRunning field.
+    public static volatile boolean isGameRunning = false;
+    // --- END OF FIX ---
+
     public static ArrayList<String> names=new ArrayList<>();
     public static ArrayList<Integer> scoreList=new ArrayList<>();
     private static final ExecutorService pool=Executors.newFixedThreadPool(playerCount);
@@ -56,16 +60,34 @@ public class Server {
         launch(args);
     }
    */
-    public static void getWords() {
-        try{
-            File wordsFile=new File("csword.txt");
-            System.out.println("file found: "+wordsFile.exists());
-            Scanner sc=new Scanner(wordsFile);
-            sc.useDelimiter(", ");
-            while(sc.hasNext()) words.add(sc.next().toLowerCase(Locale.ROOT));
-        }catch (FileNotFoundException e){
-            System.out.println("File not found");
-        }
+   public static void getWords() {
+       // Determine which file to use based on the GameContext
+       String gameMode = GameClient.GameContext.getGameMode();
+       String fileName = "word.txt"; // Default to normal mode
+
+       if ("CS".equals(gameMode)) {
+           fileName = "csword.txt";
+       }
+
+       System.out.println("Server loading words for " + gameMode + " mode from file: " + fileName);
+
+       try {
+           // Clear any old words before loading new ones
+           words.clear();
+           File wordsFile = new File(fileName);
+           Scanner sc = new Scanner(wordsFile);
+           sc.useDelimiter(", ");
+           while (sc.hasNext()) {
+               words.add(sc.next().toLowerCase(Locale.ROOT));
+           }
+           sc.close();
+       } catch (FileNotFoundException e) {
+           System.err.println("CRITICAL: Word file not found: " + fileName);
+       }
+   }
+    // Add this method to allow the game handler to refresh the words
+    public static void refreshWords() {
+        getWords();
     }
 
     public static void getStartHandler() throws InterruptedException, IOException {

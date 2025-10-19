@@ -1,0 +1,67 @@
+/* Defines a keyframe animation for a gentle fade-in effect */
+@keyframes fade-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Set the background image on the main container */
+.root-pane {
+    -fx-background-image: url("login.png");
+    -fx-background-size: cover;
+    -fx-background-position: center center;
+}
+
+/* Style for the semi-transparent frame with the fade-in animation */
+.auth-container {
+    -fx-background-color: rgba(161, 139, 177, 0.8);
+    -fx-background-radius: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 25, 0, 0, 0);
+
+    /* Apply the animation */
+    -fx-animation: fade-in 0.5s ease-out;
+}
+
+/* Style for the main title label */
+.title-label {
+    -fx-font-family: "Arial Rounded MT Bold", "Helvetica", sans-serif;
+    -fx-font-size: 32px;
+    -fx-text-fill: #333333;
+}
+
+/* Modern style for the text fields */
+.custom-input {
+    -fx-font-family: "System", sans-serif;
+    -fx-font-size: 15px;
+    -fx-background-color: transparent;
+    -fx-border-width: 0 0 2 0;
+    -fx-border-color: #B0B0B0; /* Subtle grey line */
+    -fx-padding: 8px 4px;
+}
+
+/* Highlight effect when a text field is focused */
+.custom-input:focused {
+    -fx-border-color: #0078D7; /* Professional blue highlight */
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+/* Style for the main action button */
+.custom-button {
+    -fx-background-color: #7261d5;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+    -fx-background-radius: 20;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(174, 0, 0, 0.4), 10, 0, 0, 2);
+}
+.custom-button:hover {
+    -fx-background-color: #b0c2cf;
+}
+
+/* Style for the hyperlink */
+.link-style {
+    -fx-text-fill: #7261d5;
+    -fx-font-weight: bold;
+    -fx-font-size: 17px;
+}

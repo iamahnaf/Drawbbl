@@ -2,6 +2,9 @@ package GameClient;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas; // NEW IMPORT
 import javafx.scene.canvas.GraphicsContext; // NEW IMPORT
 import javafx.scene.control.*;
@@ -14,6 +17,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import javafx.stage.Stage;
 
 import static java.lang.Thread.sleep;
 
@@ -38,6 +42,10 @@ public class CanvaviewController {
     private ObjectInputStream dIn; // For game state strings
     private ObjectInputStream drawingIn; // For DrawingAction objects
     boolean gameOver = false;
+    // --- THIS IS THE FIX ---
+    // Add a variable to store this player's most recent score.
+    private int myCurrentScore = 0;
+    // --- END OF FIX -
 
     // The 'onSave' method will no longer work as easily without an ImageView,
     // but you can snapshot the canvas if you need to re-implement it.
@@ -113,28 +121,101 @@ public class CanvaviewController {
         return t;
     }
 
-    public void setUserData(UserData u) throws IOException {
+    // --- THIS IS THE METHOD THAT HANDLES IT ---
+    // It accepts the UserData and the initialMessage from the LobbyController.
+    public void setUserData(UserData u, String initialMessage) throws IOException {
         player = u;
         dIn = player.ois;
         dOut = player.oos;
-        drawingIn = player.drawingIn; // Get the drawing input stream
+        drawingIn = player.drawingIn;
         playerDisplay.setText("PLAYER: " + player.username);
 
-        // MODIFIED: Initialize GraphicsContext with rounded lines
         g = canvas.getGraphicsContext2D();
         g.setLineCap(StrokeLineCap.ROUND);
 
-        // Add a listener to make the chat scroll down automatically
-        chatTextFlow.heightProperty().addListener((observable, oldValue, newValue) -> {
-            chatScrollPane.setVvalue(1.0);
+        chatTextFlow.heightProperty().addListener((observable, oldValue, newValue) -> chatScrollPane.setVvalue(1.0));
+
+        dOut.writeBoolean(true); // Tell server the player is ready
+        dOut.flush();
+
+        drawingActionReceiver();
+        // It passes the message to the allResponses method.
+        allResponses(initialMessage);
+    }
+
+    // This version is kept for cases where there is no initial message (like reconnecting directly into a game).
+    public void setUserData(UserData u) throws IOException {
+        setUserData(u, null);
+    }
+
+    // --- THIS METHOD USES THE initialMessage ---
+    public void allResponses(String initialMessage) {
+        Thread allres = new Thread(() -> {
+            Thread timer = setTimer(0);
+            try {
+                // It immediately processes the message here, so the UI updates instantly.
+                if (initialMessage != null && initialMessage.startsWith("Round: ")) {
+                    timer = setTimer(60);
+                    String finalInitialMessage = initialMessage;
+                    Platform.runLater(() -> serverLabel.setText(finalInitialMessage));
+                }
+
+                // Then it continues listening for all other server messages.
+                while (true) {
+                    String res = (String) dIn.readObject();
+                    // --- THIS IS THE SECOND PART OF THE FIX ---
+                    // Check if the message is a score line for THIS player.
+                    if (res.startsWith(player.username + " - ")) {
+                        // If it is, parse the score and save it.
+                        myCurrentScore = Integer.parseInt(res.split(" - ")[1]);
+                    }
+                    // --- END OF FIX -
+                    if (res.startsWith("Round: ")) {
+                        if (timer.isAlive()) timer.interrupt();
+                        timer.join();
+                        timer = setTimer(60);
+                        Platform.runLater(() -> serverLabel.setText(res));
+                    } else if (res.equals("ROUND OVER")) {
+                        if (timer.isAlive()) timer.interrupt();
+                        timer.join();
+                        tellServer("IM_DONE_GUESSING");
+                        String ans = (String) dIn.readObject();
+                        Platform.runLater(() -> serverLabel.setText(ans));
+                        timer = setWaitTimer(10);
+                    } else if (res.equals("GAME OVER")) {
+                        // --- THIS IS THE THIRD PART OF THE FIX ---
+                        // Now, when the game is over, we already know our score.
+                        if (timer.isAlive()) timer.interrupt();
+                        timer.join();
+
+                        // We use the score we saved earlier.
+                        Platform.runLater(() -> loadGameOverScreen(myCurrentScore));
+                        break; // Exit the loop
+                        // --- END OF FIX ---
+                    } else {
+                        Platform.runLater(() -> appendStyledText(res));
+                    }
+                }
+            } catch (IOException | ClassNotFoundException | InterruptedException e) {
+                System.err.println("Disconnected from server.");
+            }
         });
+        allres.start();
+    }
 
-
-        dOut.writeBoolean(true);
-        dOut.flush();   //player ready==true
-
-        drawingActionReceiver(); // Start the new receiver
-        allResponses();
+    // --- NEW HELPER METHOD FOR CLEANLINESS ---
+    private void loadGameOverScreen(int score) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("GameOver.fxml"));
+            Parent root = loader.load();
+            GameOverController controller = loader.getController();
+            controller.setFinalScore(score);
+            Stage stage = (Stage) serverLabel.getScene().getWindow();
+            stage.setScene(new Scene(root));
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+            System.exit(0);
+        }
     }
 // In CanvaviewController.java
 // --- THIS IS THE FULLY CORRECTED METHOD ---
@@ -259,50 +340,5 @@ private void appendStyledText(String rawMessage) {
     // DELETED: The old imageReceiver method is no longer needed.
     // public void imageReceiver() { ... }
 
-    public void allResponses(){
-        Thread allres=new Thread(() -> {
-            Thread timer=setTimer(0);
-            try {
-                while(true){
-                    String res = (String) dIn.readObject();
-                    if(res.startsWith("Round: ")){
-                        if (timer.isAlive()) {
-                            timer.interrupt();
-                        }
-                        timer.join();
-                        timer = setTimer(60);
-                        Platform.runLater(()->serverLabel.setText(res));
-                    } else if(res.equals("ROUND OVER")) {
-                        // --- THIS IS THE FIX ---
-                        // The round is over, so we must interrupt our own timer instead of waiting for it.
-                        if (timer.isAlive()) {
-                            timer.interrupt();
-                        }
-                        timer.join(); // Wait for the (now interrupted) timer to die.
-                        tellServer("IM_DONE_GUESSING");
-                        String ans=(String) dIn.readObject();
-                        Platform.runLater(()->serverLabel.setText(ans));
-                        timer = setWaitTimer(15);
-                    } else if(res.equals("GAME OVER")) {
-                        if (timer.isAlive()) {
-                            timer.interrupt();
-                        }
-                        timer.join();
-                        String ans=(String) dIn.readObject();
-                        Platform.runLater(()->serverLabel.setText(ans));
-                        timer=setTimer(10);
-                        timer.join();
-                        Platform.runLater(() -> serverLabel.setText(res));
-                        timer=setTimer(10);
-                        timer.join();
-                        player.server.close();
-                        System.exit(0);
-                    } else {
-                        Platform.runLater(()-> appendStyledText(res));
-                    }
-                }
-            } catch (IOException | ClassNotFoundException | InterruptedException e) { e.printStackTrace(); }
-        });
-        allres.start();
-    }
+
 }

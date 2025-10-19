@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="500.0" prefWidth="700.0" styleClass="root-pane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GameClient.ScoreboardController">
+    <stylesheets>
+        <URL value="@../GameAuth/login_style.css" />
+    </stylesheets>
+    <children>
+        <VBox alignment="CENTER" spacing="20.0" styleClass="auth-container" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+            <padding>
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+            </padding>
+            <children>
+                <Label styleClass="title-label" text="My Scores" />
+                <TableView fx:id="scoreTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="scoreColumn" prefWidth="100.0" text="Score" />
+                        <!-- THIS IS THE NEW COLUMN -->
+                        <TableColumn fx:id="wordColumn" prefWidth="200.0" text="Word Guessed" />
+                        <!-- END OF NEW COLUMN -->
+                        <TableColumn fx:id="dateColumn" prefWidth="250.0" text="Date" />
+                    </columns>
+                </TableView>
+                <Button onAction="#handleBackButton" prefHeight="40.0" prefWidth="150.0" styleClass="custom-button" text="Back" />
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>

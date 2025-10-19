@@ -46,6 +46,7 @@ public class CanvasController {
     private final Image penCursor = new Image(newFile.toURI().toString());
   //  private CheckStatus checker = new CheckStatus();
 
+
     @FXML
     public void initialize() {
         new Thread(this::gameHandler).start();
@@ -192,6 +193,8 @@ public class CanvasController {
 
     public void gameHandler() {
         int pc=Server.playerCount;
+        Server.refreshWords(); // <<< ADD THIS LINE
+        Server.isGameRunning = true;
 
         for(int round=1 ; round<=Server.rounds ; round++) {
            // RESET THE COUNTER AT THE START OF EACH ROUND ---
@@ -218,7 +221,7 @@ public class CanvasController {
                 timer.join();
                 sendScores(round);
                 if(round<Server.rounds) {
-                    waitTimer=setWaitTimer(15);
+                    waitTimer=setWaitTimer(10);
                     sendResOut("ROUND OVER");
                     for(int pnum=0;pnum<pc;pnum++) play[pnum].join();
                     sendResOut("Round: "+round+"   word: "+word);
@@ -260,7 +263,12 @@ public class CanvasController {
                 if (word.equals(lowerCaseGuess)) {
                     int score = Server.scoreList.get(pnum);
                     if (!answered && timer.isAlive()) {
-                        Server.scoreList.set(pnum, score + 10);
+                        int scoreToAdd = 10; // The score for a correct guess
+                        Server.scoreList.set(pnum, score + scoreToAdd);
+                        // --- THIS IS THE MODIFIED LINE ---
+                        // We now pass the 'word' to the ScoreManager
+                        ScoreManager.saveScore(pname, scoreToAdd, word);
+                        // --- END OF MODIFICATION ---
                         // ADD a prefix for correct answers
                         sendResOut("STYLE_GREEN:" + pname + " guessed the word!");
                         answered = true;

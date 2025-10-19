@@ -1,0 +1,43 @@
+/* --- Background and Container Styles --- */
+.root-pane {
+    -fx-background-image: url("../GameAuth/login.png"); /* Points to the image in the GameAuth folder */
+    -fx-background-size: cover;
+}
+
+.auth-container {
+    -fx-background-color: rgba(248, 191, 156, 0.65);
+    -fx-background-radius: 20;
+    -fx-border-color: rgba(0, 0, 0, 0.1);
+    -fx-border-width: 1px;
+    -fx-border-radius: 20;
+}
+
+.title-label {
+    -fx-font-family: "Arial Rounded MT Bold", "Helvetica", sans-serif;
+    -fx-font-size: 28px;
+    -fx-text-fill: #333333;
+}
+
+/* --- Dynamic Button Style for this screen --- */
+.mode-button {
+    -fx-background-color: linear-gradient(to bottom right, #485978, #5897d8);
+    -fx-text-fill: #ffffff;
+    -fx-font-family: "System", sans-serif;
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+    -fx-background-radius: 25;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 2);
+    -fx-transition: all 0.2s ease-in-out;
+}
+
+.mode-button:hover {
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 20, 0, 0, 3);
+}
+
+.mode-button:pressed {
+    -fx-scale-x: 1.0;
+    -fx-scale-y: 1.0;
+}

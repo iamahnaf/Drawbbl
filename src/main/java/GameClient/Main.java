@@ -11,16 +11,17 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        // Load the new launcher UI
-        Parent root = FXMLLoader.load(getClass().getResource("Launcher.fxml"));
-        primaryStage.setTitle("Drawbbl");
+        // --- THIS IS THE FIX ---
+        // Load the new login screen instead of the launcher.
+        Parent root = FXMLLoader.load(getClass().getResource("/GameAuth/Login.fxml"));
+        primaryStage.setTitle("Drawbbl Login");
+        // --- END OF FIX ---
 
-        // Optional: Add an icon to the launcher window
         try {
             Image appIcon = new Image(getClass().getResourceAsStream("icon.png"));
             primaryStage.getIcons().add(appIcon);
         } catch (Exception e) {
-            System.out.println("Launcher icon not found, skipping.");
+            System.out.println("Icon not found, skipping.");
         }
 
         primaryStage.setScene(new Scene(root));

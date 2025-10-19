@@ -8,7 +8,7 @@
 /* NEW: Style for the semi-transparent frame behind the buttons */
 .button-container {
     /* White background with 70% opacity for a "frosted glass" look */
-    -fx-background-color: rgba(255, 255, 255, 0.7);
+    -fx-background-color: rgba(255, 255, 255, 0.6);
     /* Rounded corners to match the buttons */
     -fx-background-radius: 25;
     /* Add a subtle shadow to lift the frame off the background */
@@ -18,7 +18,7 @@
 /* UPDATED: New light color style for the buttons */
 .custom-button {
     /* A pleasant, light sky blue */
-    -fx-background-color: #87CEEB;
+    -fx-background-color: #8ac3dc;
     /* Dark grey text for good readability on a light button */
     -fx-text-fill: #333333;
     -fx-font-family: "Arial Rounded MT Bold", "Helvetica", sans-serif;

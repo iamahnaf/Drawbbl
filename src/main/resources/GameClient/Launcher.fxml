@@ -8,13 +8,13 @@
 
 <!-- The root is now an AnchorPane -->
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="617.0" prefWidth="921.0" styleClass="root-pane" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GameClient.LauncherController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="725.0" prefWidth="1108.0" styleClass="root-pane" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GameClient.LauncherController">
     <stylesheets>
         <URL value="@launcher_styles.css" />
     </stylesheets>
     <children>
         <!-- This VBox is our semi-transparent frame -->
-        <VBox alignment="CENTER" layoutX="279.0" layoutY="339.0" maxHeight="233.0" maxWidth="475.0" prefHeight="220.0" prefWidth="398.0" spacing="15.0" styleClass="button-container" AnchorPane.bottomAnchor="58.0" AnchorPane.leftAnchor="279.0" AnchorPane.rightAnchor="244.0">
+        <VBox alignment="CENTER" layoutX="282.0" layoutY="332.0" maxHeight="719.0" maxWidth="1108.0" prefHeight="337.0" prefWidth="555.0" spacing="15.0" styleClass="button-container" AnchorPane.bottomAnchor="27.0" AnchorPane.leftAnchor="282.0" AnchorPane.rightAnchor="271.0">
             <children>
                 <Button fx:id="drawerButton" onAction="#handleDrawerClick" prefHeight="50.0" prefWidth="280.0" styleClass="custom-button" text="Drawer (Host Server)" />
                 <Button fx:id="guesserButton" onAction="#handleGuesserClick" prefHeight="50.0" prefWidth="280.0" styleClass="custom-button" text="Join as Guesser" />
