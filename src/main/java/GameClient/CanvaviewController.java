@@ -248,12 +248,20 @@ public class CanvaviewController {
         }
     }
 // In CanvaviewController.java
-// --- THIS IS THE FULLY CORRECTED METHOD ---
+// Replace your existing appendStyledText method with this one.
 private void appendStyledText(String rawMessage) {
     String message = rawMessage;
-    Color messageColor = Color.BLACK; // Default color
+    Color messageColor = Color.BLACK;
 
-    // --- 1. Check for special color prefixes and strip them ---
+    // --- THIS IS THE NEW LOGIC ---
+    // Check if this is a "correct guess" message and, if so, remove the points part for display.
+    int pointsIndex = message.indexOf(" (+");
+    if (pointsIndex != -1 && message.contains(" guessed the word!")) {
+        message = message.substring(0, pointsIndex);
+    }
+    // --- END OF NEW LOGIC ---
+
+    // 1. Check for special color prefixes and strip them
     if (message.startsWith("STYLE_YELLOW:")) {
         message = message.substring("STYLE_YELLOW:".length());
         messageColor = Color.ORANGE;
@@ -262,31 +270,30 @@ private void appendStyledText(String rawMessage) {
         messageColor = Color.LIMEGREEN;
     }
 
-    // --- 2. Split the message into speaker and content ---
+    // 2. Split the message into speaker and content
     int colonIndex = message.indexOf(":");
 
-    // Case 1: It's a player/server message like "Aran: mat" or a special message with a name
+    // Case 1: It's a player/server message like "Aran: mat"
     if (colonIndex > 0) {
         String speaker = message.substring(0, colonIndex);
         String content = message.substring(colonIndex); // Includes the ":"
 
         Text speakerText = new Text(speaker);
-        speakerText.setFont(Font.font("Tlwg Mono", FontWeight.BOLD, 15)); // Set font to BOLD
+        speakerText.setFont(Font.font("Tlwg Mono", FontWeight.BOLD, 15));
         speakerText.setFill(messageColor);
 
         Text contentText = new Text(content);
-        contentText.setFont(Font.font("Tlwg Mono", FontWeight.NORMAL, 15)); // Set font to NORMAL
+        contentText.setFont(Font.font("Tlwg Mono", FontWeight.NORMAL, 15));
         contentText.setFill(messageColor);
 
         chatTextFlow.getChildren().addAll(speakerText, contentText, new Text("\n"));
     }
-    // Case 2: It's a system message or a special message without a colon
+    // Case 2: It's a system message without a colon
     else {
         Text systemText = new Text(message);
-        systemText.setFont(Font.font("Tlwg Mono", FontWeight.BOLD, 15)); // Make the whole message bold
-        systemText.setFill(messageColor); // Use the determined color
+        systemText.setFont(Font.font("Tlwg Mono", FontWeight.BOLD, 15));
+        systemText.setFill(messageColor);
 
-        // For general system messages without a color prefix, make them gray
         if (messageColor == Color.BLACK) {
             systemText.setFill(Color.GRAY);
         }

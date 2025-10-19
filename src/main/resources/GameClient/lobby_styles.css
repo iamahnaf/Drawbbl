@@ -1,0 +1,42 @@
+/* Set the background image for the entire screen */
+.root-pane {
+    -fx-background-image: url("3.png");
+    -fx-background-size: cover;
+    -fx-background-position: center;
+}
+
+/* Style for the main "Lobby" title */
+.lobby-title {
+    -fx-font-family: "Arial Rounded MT Bold", "Helvetica", sans-serif;
+    -fx-font-size: 52px;
+    -fx-text-fill: #FF9900; /* Bright orange */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.75), 10, 0, 0, 2);
+}
+
+/* Style for the text area showing the list of players */
+.player-list-area {
+    -fx-font-family: "Consolas", "Courier New", monospace;
+    -fx-font-size: 22px;
+    -fx-text-fill: #333333;
+
+    /* Semi-transparent white background to ensure text is readable */
+    -fx-background-color: rgba(255, 255, 255, 0.8);
+    -fx-background-radius: 15;
+    -fx-border-color: rgba(0, 0, 0, 0.1);
+    -fx-border-width: 1px;
+    -fx-border-radius: 15;
+}
+
+/* Remove the default blue focus ring on the text area */
+.player-list-area:focused {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+/* Style for the timer/status label at the bottom */
+.status-label {
+    -fx-font-family: "Arial Rounded MT Bold", "Helvetica", sans-serif;
+    -fx-font-size: 32px;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.9), 5, 0, 0, 1);
+}
