@@ -13,7 +13,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         // Load the new launcher UI
         Parent root = FXMLLoader.load(getClass().getResource("Launcher.fxml"));
-        primaryStage.setTitle("Drawbbl Launcher");
+        primaryStage.setTitle("Drawbbl");
 
         // Optional: Add an icon to the launcher window
         try {

@@ -16,7 +16,7 @@ import java.util.concurrent.Executors;
 //import java.util.concurrent.TimeUnit;
 
 
-public class Server extends Application{
+public class Server {
     public static ServerSocket listener,listener1;
     static ArrayList<StartHandler> clients=new ArrayList<>();
     static ArrayList<Socket> socketList=new ArrayList<>();
@@ -36,6 +36,7 @@ public class Server extends Application{
     public static ArrayList<String> words=new ArrayList<>();
 
     Stage stage;
+    /*
     @Override
     public void start(Stage primaryStage) throws Exception{
         stage=primaryStage;
@@ -45,14 +46,16 @@ public class Server extends Application{
         stage.setScene(scene);
         stage.show();
     }
+    */
 
+   /*
     public static void main(String[] args) throws IOException, InterruptedException {
         getWords();
         getStartHandler();
         System.out.println("GameHandler Started..");
         launch(args);
     }
-
+   */
     public static void getWords() {
         try{
             File wordsFile=new File("csword.txt");
