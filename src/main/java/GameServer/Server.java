@@ -26,7 +26,7 @@ public class Server {
     public static ArrayList<ObjectOutputStream> drawingOut=new ArrayList<>();
 
     public static int playerCount=2;
-    public static int rounds=2;
+    public static int rounds=3;
     public static volatile int correctGuessCount = 0;
 
     // Add the missing isGameRunning field.
