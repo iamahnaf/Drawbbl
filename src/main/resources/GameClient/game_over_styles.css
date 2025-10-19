@@ -1,0 +1,49 @@
+.root-pane {
+    -fx-background-image: url("3.png");
+    -fx-background-size: cover;
+    -fx-background-position: center;
+}
+
+.game-over-container {
+    -fx-background-color: rgba(234, 208, 148, 0.3); /* Beige with 80% opacity */
+    -fx-background-radius: 20;
+    -fx-border-color: rgba(255, 255, 255, 0.2);
+    -fx-border-width: 1px;
+    -fx-border-radius: 20;
+}
+
+.game-over-title {
+    -fx-font-family: "Arial Rounded MT Bold", "Helvetica", sans-serif;
+    -fx-font-size: 52px;
+    -fx-text-fill: #a18c39;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.75), 5, 0, 0, 1);
+}
+
+.score-description-label {
+    -fx-font-size: 24px;
+    -fx-text-fill: #333333; /* Darker text for better readability on beige */
+}
+
+.final-score-number {
+    -fx-font-family: "Arial Black", sans-serif;
+    -fx-font-size: 72px;
+    -fx-text-fill: #f3a923; /* A strong blue to contrast with beige */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 2);
+}
+
+.mode-button {
+    -fx-background-color: linear-gradient(to bottom right, #dc904f, #d0d661);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+    -fx-background-radius: 25;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 2);
+    -fx-transition: all 0.2s ease-in-out;
+}
+
+.mode-button:hover {
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 20, 0, 0, 3);
+}

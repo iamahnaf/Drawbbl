@@ -209,6 +209,7 @@ public class CanvasController {
             } catch (IOException e) { e.printStackTrace(); }
 
             Platform.runLater(() -> setWord(word));
+
             Thread timer=setTimer(60),waitTimer;
             Thread[] play=new Thread[pc];
             for(int pnum=0;pnum<pc;pnum++) {
@@ -269,8 +270,10 @@ public class CanvasController {
                         // We now pass the 'word' to the ScoreManager
                         ScoreManager.saveScore(pname, scoreToAdd, word);
                         // --- END OF MODIFICATION ---
-                        // ADD a prefix for correct answers
-                        sendResOut("STYLE_GREEN:" + pname + " guessed the word!");
+                        // --- THIS IS THE LINE TO CHANGE ---
+                        // It needs to include the points in the message.
+                        sendResOut("STYLE_GREEN:" + pname + " guessed the word! (+" + scoreToAdd + " points)");
+                        // --- END OF CHANGE ---
                         answered = true;
                         // --- 2. INCREMENT COUNTER AND CHECK IF ROUND IS OVER ---
                         handleCorrectGuess(timer, playerThreads);

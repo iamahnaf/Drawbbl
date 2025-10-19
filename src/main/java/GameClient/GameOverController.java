@@ -1,31 +1,40 @@
 package GameClient;
 
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.stage.Stage;
+
+import java.io.IOException;
 
 public class GameOverController {
 
     @FXML
-    private Label scoreLabel;
+    private Label finalScoreLabel;
 
-    @FXML
-    private Button exitButton;
-
-    /**
-     * This method will be called by the CanvaviewController to pass the final score.
-     * @param score The final score of the player.
-     */
+    // This method receives the score from CanvaviewController
     public void setFinalScore(int score) {
-        scoreLabel.setText("Your final score: " + score);
+        finalScoreLabel.setText(String.valueOf(score));
     }
 
+    // This method handles the "Back to Main Menu" button click
     @FXML
-    void handleExitClick(ActionEvent event) {
-        // Exit the application cleanly.
-        Platform.exit();
-        System.exit(0);
+    private void handleMainMenuButton(ActionEvent event) throws IOException {
+        // Load the ModeSelection screen
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("ModeSelection.fxml"));
+        Parent root = loader.load();
+
+        // Get its controller and re-initialize it with the logged-in user's name
+        ModeSelectionController controller = loader.getController();
+        controller.initialize(GameContext.getLoggedInUsername());
+
+        // Get the current stage and set the new scene
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(new Scene(root));
+        stage.setTitle("Drawbbl - Main Menu");
     }
 }

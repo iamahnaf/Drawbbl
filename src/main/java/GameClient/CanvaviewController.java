@@ -148,28 +148,59 @@ public class CanvaviewController {
         setUserData(u, null);
     }
 
-    // --- THIS METHOD USES THE initialMessage ---
+    // In GameClient/CanvaviewController.java
+
+    // This is the new, debug-enabled version of the method.
     public void allResponses(String initialMessage) {
         Thread allres = new Thread(() -> {
+            // --- DEBUG STEP 1: Print the client's username at the start ---
+            System.out.println("[DEBUG] Client thread started for user: '"+ player.username + "'");
+            // --- END DEBUG ---
+
             Thread timer = setTimer(0);
             try {
-                // It immediately processes the message here, so the UI updates instantly.
                 if (initialMessage != null && initialMessage.startsWith("Round: ")) {
                     timer = setTimer(60);
                     String finalInitialMessage = initialMessage;
                     Platform.runLater(() -> serverLabel.setText(finalInitialMessage));
+                    myCurrentScore = 0;
+                    System.out.println("[DEBUG] Game started. Score reset to 0."); // DEBUG
                 }
 
-                // Then it continues listening for all other server messages.
                 while (true) {
                     String res = (String) dIn.readObject();
-                    // --- THIS IS THE SECOND PART OF THE FIX ---
-                    // Check if the message is a score line for THIS player.
-                    if (res.startsWith(player.username + " - ")) {
-                        // If it is, parse the score and save it.
-                        myCurrentScore = Integer.parseInt(res.split(" - ")[1]);
+
+                    // --- DEBUG STEP 2: Print every message received from the server ---
+                    System.out.println("[DEBUG] Received from server: \"" + res + "\"");
+                    // --- END DEBUG ---
+
+                    // --- NEW, MORE ROBUST SCORE LOGIC ---
+                    // Trim the username and make the check case-insensitive for maximum reliability.
+                    String trimmedUsername = player.username.trim();
+                    if (res.toLowerCase().contains(trimmedUsername.toLowerCase() + " guessed the word!")) {
+
+                        // --- DEBUG STEP 3: Confirm that the score block is being entered ---
+                        System.out.println("[DEBUG] SUCCESS: Score message detected for this user!");
+                        // --- END DEBUG ---
+
+                        try {
+                            int startIndex = res.indexOf("(+");
+                            int endIndex = res.indexOf(" points)");
+                            if (startIndex != -1 && endIndex != -1) {
+                                String pointsStr = res.substring(startIndex + 2, endIndex);
+                                int pointsToAdd = Integer.parseInt(pointsStr);
+                                myCurrentScore += pointsToAdd;
+
+                                // --- DEBUG STEP 4: Confirm the score was updated ---
+                                System.out.println("[DEBUG] Parsed " + pointsToAdd + " points. New total score: " + myCurrentScore);
+                                // --- END DEBUG ---
+                            }
+                        } catch (Exception e) {
+                            System.err.println("[DEBUG] ERROR: Failed to parse points from message: " + res);
+                        }
                     }
-                    // --- END OF FIX -
+                    // --- END OF NEW SCORE LOGIC ---
+
                     if (res.startsWith("Round: ")) {
                         if (timer.isAlive()) timer.interrupt();
                         timer.join();
@@ -183,15 +214,15 @@ public class CanvaviewController {
                         Platform.runLater(() -> serverLabel.setText(ans));
                         timer = setWaitTimer(10);
                     } else if (res.equals("GAME OVER")) {
-                        // --- THIS IS THE THIRD PART OF THE FIX ---
-                        // Now, when the game is over, we already know our score.
                         if (timer.isAlive()) timer.interrupt();
                         timer.join();
 
-                        // We use the score we saved earlier.
+                        // --- DEBUG STEP 5: Confirm the final score before showing the screen ---
+                        System.out.println("[DEBUG] GAME OVER. Final score to be displayed: " + myCurrentScore);
+                        // --- END DEBUG ---
+
                         Platform.runLater(() -> loadGameOverScreen(myCurrentScore));
-                        break; // Exit the loop
-                        // --- END OF FIX ---
+                        break;
                     } else {
                         Platform.runLater(() -> appendStyledText(res));
                     }
@@ -202,7 +233,6 @@ public class CanvaviewController {
         });
         allres.start();
     }
-
     // --- NEW HELPER METHOD FOR CLEANLINESS ---
     private void loadGameOverScreen(int score) {
         try {
