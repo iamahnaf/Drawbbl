@@ -1,0 +1,43 @@
+/* Set the background image on the main container */
+.root-pane {
+    -fx-background-image: url("launcher.png");
+    -fx-background-size: cover;
+    -fx-background-position: center center;
+}
+
+/* NEW: Style for the semi-transparent frame behind the buttons */
+.button-container {
+    /* White background with 70% opacity for a "frosted glass" look */
+    -fx-background-color: rgba(255, 255, 255, 0.7);
+    /* Rounded corners to match the buttons */
+    -fx-background-radius: 25;
+    /* Add a subtle shadow to lift the frame off the background */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 15, 0, 0, 0);
+}
+
+/* UPDATED: New light color style for the buttons */
+.custom-button {
+    /* A pleasant, light sky blue */
+    -fx-background-color: #87CEEB;
+    /* Dark grey text for good readability on a light button */
+    -fx-text-fill: #333333;
+    -fx-font-family: "Arial Rounded MT Bold", "Helvetica", sans-serif;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 30; /* Keep the fully rounded corners */
+    -fx-padding: 12 25 12 25;
+    /* A softer shadow for a more subtle effect */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 8, 0.5, 1, 1);
+    -fx-cursor: hand;
+    -fx-border-width: 2px;
+    -fx-border-color: white;
+    -fx-border-radius: 30;
+}
+
+/* UPDATED: Hover effect for the new button style */
+.custom-button:hover {
+    /* A slightly lighter, brighter blue for the hover effect */
+    -fx-background-color: #B0E0E6;
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}

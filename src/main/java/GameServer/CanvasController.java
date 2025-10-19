@@ -44,7 +44,7 @@ public class CanvasController {
 
     File newFile = new File("cursor.png");
     private final Image penCursor = new Image(newFile.toURI().toString());
-    private CheckStatus checker = new CheckStatus();
+  //  private CheckStatus checker = new CheckStatus();
 
     @FXML
     public void initialize() {
