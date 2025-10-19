@@ -191,65 +191,67 @@ public class CanvasController {
         return t;
     }
 
+    // Replace your existing gameHandler() method with this one
     public void gameHandler() {
-        int pc=Server.playerCount;
-        Server.refreshWords(); // <<< ADD THIS LINE
+        int pc = Server.playerCount;
+        Server.refreshWords();
         Server.isGameRunning = true;
 
-        for(int round=1 ; round<=Server.rounds ; round++) {
-           // RESET THE COUNTER AT THE START OF EACH ROUND ---
+        for (int round = 1; round <= Server.rounds; round++) {
             Server.correctGuessCount = 0;
             Platform.runLater(this::ClearCanvas);
             System.out.print("GameHandler round: " + round);
             String word = Server.words.get((int) (Math.random() * Server.words.size()));
             System.out.println(", Word chosen: " + word);
-            String wordLength=getWordLength(word);
+            String wordLength = getWordLength(word);
             try {
-                sendResOut("Round: "+round+"   word: "+wordLength);
-            } catch (IOException e) { e.printStackTrace(); }
+                sendResOut("Round: " + round + "   word: " + wordLength);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
             Platform.runLater(() -> setWord(word));
 
-            Thread timer=setTimer(60),waitTimer;
-            Thread[] play=new Thread[pc];
-            for(int pnum=0;pnum<pc;pnum++) {
+            // --- MODIFICATION: Capture the start time of the round ---
+            long roundStartTime = System.currentTimeMillis();
+            Thread timer = setTimer(60); // Assuming a 60-second round
+            // --- END OF MODIFICATION ---
+
+            Thread waitTimer;
+            Thread[] play = new Thread[pc];
+            for (int pnum = 0; pnum < pc; pnum++) {
                 int finalPnum = pnum;
-                // Pass the 'play' array to the gamePlay method
-                play[pnum] = new Thread(() -> gamePlay(finalPnum, word, timer, play));
+                // --- MODIFICATION: Pass the roundStartTime to the gamePlay method ---
+                play[pnum] = new Thread(() -> gamePlay(finalPnum, word, timer, play, roundStartTime));
                 play[pnum].start();
             }
             try {
                 timer.join();
                 sendScores(round);
-                if(round<Server.rounds) {
-                    waitTimer=setWaitTimer(10);
+                if (round < Server.rounds) {
+                    waitTimer = setWaitTimer(10);
                     sendResOut("ROUND OVER");
-                    for(int pnum=0;pnum<pc;pnum++) play[pnum].join();
-                    sendResOut("Round: "+round+"   word: "+word);
+                    for (int pnum = 0; pnum < pc; pnum++) play[pnum].join();
+                    sendResOut("Round: " + round + "   word: " + word);
                     waitTimer.join();
-                }
-                else {
+                } else {
                     sendResOut("Winner:\n" + Server.getWinners());
                     sendResOut("GAME OVER");
                     sendResOut("Round: " + round + "   word: " + word);
-
-                    // --- MODIFICATION START ---
-                    // Send a final shutdown command to all clients before exiting.
                     sendDrawingAction(new DrawingAction(DrawingAction.ActionType.SHUTDOWN, 0, 0, 0, 0, 0, null));
-                    // Give a brief moment for the message to be sent.
                     try {
                         sleep(100);
-                    } catch (InterruptedException ignored) {}
-                    // --- MODIFICATION END ---
-
+                    } catch (InterruptedException ignored) {
+                    }
                     System.exit(0);
                 }
-            } catch (InterruptedException | IOException e) { e.printStackTrace(); }
-
+            } catch (InterruptedException | IOException e) {
+                e.printStackTrace();
+            }
         }
     }
-    // Replace the existing gamePlay method in CanvasController.java with this one.
-    public void gamePlay(int pnum, String word, Thread timer, Thread[] playerThreads) {
+    // Replace your existing gamePlay() method with this one
+    public void gamePlay(int pnum, String word, Thread timer, Thread[] playerThreads, long roundStartTime) {
         String pname = Server.names.get(pnum);
         try {
             ObjectInputStream ois = Server.oisList.get(pnum);
@@ -264,28 +266,30 @@ public class CanvasController {
                 if (word.equals(lowerCaseGuess)) {
                     int score = Server.scoreList.get(pnum);
                     if (!answered && timer.isAlive()) {
-                        int scoreToAdd = 10; // The score for a correct guess
+                        // --- THIS IS THE NEW DYNAMIC SCORING LOGIC ---
+                        long guessTime = System.currentTimeMillis();
+                        long elapsedSeconds = (guessTime - roundStartTime) / 1000;
+
+                        // The score is higher for faster answers. Max score is 60, min is 1.
+                        int scoreToAdd = Math.max(1, 60 - (int) elapsedSeconds);
+                        // --- END OF NEW SCORING LOGIC ---
+
                         Server.scoreList.set(pnum, score + scoreToAdd);
-                        // --- THIS IS THE MODIFIED LINE ---
-                        // We now pass the 'word' to the ScoreManager
                         ScoreManager.saveScore(pname, scoreToAdd, word);
-                        // --- END OF MODIFICATION ---
-                        // --- THIS IS THE LINE TO CHANGE ---
-                        // It needs to include the points in the message.
+
+                        // The message now includes the dynamically calculated score
                         sendResOut("STYLE_GREEN:" + pname + " guessed the word! (+" + scoreToAdd + " points)");
-                        // --- END OF CHANGE ---
+
                         answered = true;
-                        // --- 2. INCREMENT COUNTER AND CHECK IF ROUND IS OVER ---
                         handleCorrectGuess(timer, playerThreads);
                     } else {
                         sendPrivateMessage(pnum, "You already answered correctly!");
                     }
                 } else if (LevenshteinDistance.calculate(word, lowerCaseGuess) == 1) {
                     if (!answered) {
-                        // ADD a prefix for "close" hints
-                        sendPrivateMessage(pnum, "STYLE_YELLOW:"+lowerCaseGuess+" is close!");
+                        sendPrivateMessage(pnum, "STYLE_YELLOW:" + lowerCaseGuess + " is close!");
                     }
-                   sendResOut(pname + ": " + guess);
+                    sendResOut(pname + ": " + guess);
                 } else {
                     sendResOut(pname + ": " + guess);
                 }
