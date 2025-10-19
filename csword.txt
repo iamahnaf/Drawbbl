@@ -1,1 +1,1 @@
-Array, Branch, Bug, Cloud, Cookie, Deadlock, Firewall, Fork, Garbage, Graph, Hash, Heap, Link, Lock, Loop, Map, Matrix, Merge, Path, Pipeline, Pointer, Queue, Recursion, Root, Search, Server, Sort, Spaghetti, Stack, Stream, Tree, Virus
+Array, Queue, Stack, Linked List, Hash, Graph, DeadLock, Tree, Map, Sort, Loop, Variable
