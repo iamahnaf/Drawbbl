@@ -405,7 +405,7 @@ public class CanvasController {
         }
     }
 
-    // --- NEW HELPER METHOD ---
+    // Replace your existing generateAndSendHint method with this one.
     private void generateAndSendHint(String word) {
         // Find all possible indices that haven't been revealed yet
         List<Integer> availableIndices = new ArrayList<>();
@@ -415,16 +415,14 @@ public class CanvasController {
             }
         }
 
-        // If there are no more letters to reveal, do nothing
         if (availableIndices.isEmpty()) {
             return;
         }
 
-        // Pick a random index from the available ones
         int randomIndexToReveal = availableIndices.get((int) (Math.random() * availableIndices.size()));
         revealedIndices.add(randomIndexToReveal);
 
-        // Build the hint string
+        // Build the hint string (e.g., "a _ p p _ _")
         StringBuilder hintBuilder = new StringBuilder();
         for (int i = 0; i < word.length(); i++) {
             if (revealedIndices.contains(i)) {
@@ -436,12 +434,14 @@ public class CanvasController {
             }
         }
 
-        // Send the hint to all players
+        // --- THIS IS THE CHANGE ---
+        // Send a special message that the client can use to update the label directly.
         try {
-            sendResOut("STYLE_YELLOW:Hint: " + hintBuilder.toString().trim());
+            sendResOut("HINT_UPDATE:" + hintBuilder.toString().trim());
         } catch (IOException e) {
             e.printStackTrace();
         }
+        // --- END OF CHANGE ---
     }
 
 }

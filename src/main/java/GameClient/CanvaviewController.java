@@ -150,13 +150,9 @@ public class CanvaviewController {
 
     // In GameClient/CanvaviewController.java
 
-    // This is the new, debug-enabled version of the method.
+    // Replace your existing allResponses method with this one.
     public void allResponses(String initialMessage) {
         Thread allres = new Thread(() -> {
-            // --- DEBUG STEP 1: Print the client's username at the start ---
-            System.out.println("[DEBUG] Client thread started for user: '"+ player.username + "'");
-            // --- END DEBUG ---
-
             Thread timer = setTimer(0);
             try {
                 if (initialMessage != null && initialMessage.startsWith("Round: ")) {
@@ -164,44 +160,41 @@ public class CanvaviewController {
                     String finalInitialMessage = initialMessage;
                     Platform.runLater(() -> serverLabel.setText(finalInitialMessage));
                     myCurrentScore = 0;
-                    System.out.println("[DEBUG] Game started. Score reset to 0."); // DEBUG
                 }
 
                 while (true) {
                     String res = (String) dIn.readObject();
 
-                    // --- DEBUG STEP 2: Print every message received from the server ---
-                    System.out.println("[DEBUG] Received from server: \"" + res + "\"");
-                    // --- END DEBUG ---
-
-                    // --- NEW, MORE ROBUST SCORE LOGIC ---
-                    // Trim the username and make the check case-insensitive for maximum reliability.
+                    // --- (Score tracking logic remains the same) ---
                     String trimmedUsername = player.username.trim();
                     if (res.toLowerCase().contains(trimmedUsername.toLowerCase() + " guessed the word!")) {
-
-                        // --- DEBUG STEP 3: Confirm that the score block is being entered ---
-                        System.out.println("[DEBUG] SUCCESS: Score message detected for this user!");
-                        // --- END DEBUG ---
-
                         try {
                             int startIndex = res.indexOf("(+");
                             int endIndex = res.indexOf(" points)");
                             if (startIndex != -1 && endIndex != -1) {
                                 String pointsStr = res.substring(startIndex + 2, endIndex);
-                                int pointsToAdd = Integer.parseInt(pointsStr);
-                                myCurrentScore += pointsToAdd;
-
-                                // --- DEBUG STEP 4: Confirm the score was updated ---
-                                System.out.println("[DEBUG] Parsed " + pointsToAdd + " points. New total score: " + myCurrentScore);
-                                // --- END DEBUG ---
+                                myCurrentScore += Integer.parseInt(pointsStr);
                             }
                         } catch (Exception e) {
-                            System.err.println("[DEBUG] ERROR: Failed to parse points from message: " + res);
+                            System.err.println("Could not parse points from message: " + res);
                         }
                     }
-                    // --- END OF NEW SCORE LOGIC ---
 
-                    if (res.startsWith("Round: ")) {
+                    // --- THIS IS THE NEW LOGIC FOR HANDLING HINTS ---
+                    if (res.startsWith("HINT_UPDATE:")) {
+                        // Extract the hint (e.g., "a _ p p _ _")
+                        String hint = res.substring("HINT_UPDATE:".length());
+
+                        // Update the serverLabel with the new hint
+                        Platform.runLater(() -> {
+                            String currentText = serverLabel.getText();
+                            // Rebuild the label text, replacing the old blanks with the new hint
+                            String newText = currentText.substring(0, currentText.indexOf("word: ") + 6) + hint;
+                            serverLabel.setText(newText);
+                        });
+                    }
+                    // --- END OF NEW HINT LOGIC ---
+                    else if (res.startsWith("Round: ")) {
                         if (timer.isAlive()) timer.interrupt();
                         timer.join();
                         timer = setTimer(60);
@@ -216,14 +209,10 @@ public class CanvaviewController {
                     } else if (res.equals("GAME OVER")) {
                         if (timer.isAlive()) timer.interrupt();
                         timer.join();
-
-                        // --- DEBUG STEP 5: Confirm the final score before showing the screen ---
-                        System.out.println("[DEBUG] GAME OVER. Final score to be displayed: " + myCurrentScore);
-                        // --- END DEBUG ---
-
                         Platform.runLater(() -> loadGameOverScreen(myCurrentScore));
                         break;
                     } else {
+                        // All other messages go to the chat
                         Platform.runLater(() -> appendStyledText(res));
                     }
                 }
