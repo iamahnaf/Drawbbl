@@ -16,6 +16,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.List;
+
 import javafx.scene.shape.StrokeLineCap; // NEW IMPORT
 
 import static java.lang.Thread.sleep;
@@ -41,6 +44,8 @@ public class CanvasController {
 
     // NEW: Variables to store the last mouse position
     private double lastX, lastY;
+    // --- NEW VARIABLE: To track revealed hint indices for the current word ---
+    private final List<Integer> revealedIndices = new ArrayList<>();
 
     File newFile = new File("cursor.png");
     private final Image penCursor = new Image(newFile.toURI().toString());
@@ -191,47 +196,64 @@ public class CanvasController {
         return t;
     }
 
-    // Replace your existing gameHandler() method with this one
+    // Replace your existing gameHandler() method with this corrected version.
     public void gameHandler() {
         int pc = Server.playerCount;
         Server.refreshWords();
         Server.isGameRunning = true;
 
         for (int round = 1; round <= Server.rounds; round++) {
+            revealedIndices.clear(); // Clear hints for the new round
             Server.correctGuessCount = 0;
             Platform.runLater(this::ClearCanvas);
-            System.out.print("GameHandler round: " + round);
+
             String word = Server.words.get((int) (Math.random() * Server.words.size()));
-            System.out.println(", Word chosen: " + word);
+            System.out.println("GameHandler round: " + round + ", Word chosen: " + word);
             String wordLength = getWordLength(word);
             try {
                 sendResOut("Round: " + round + "   word: " + wordLength);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            } catch (IOException e) { e.printStackTrace(); }
 
             Platform.runLater(() -> setWord(word));
 
-            // --- MODIFICATION: Capture the start time of the round ---
             long roundStartTime = System.currentTimeMillis();
-            Thread timer = setTimer(60); // Assuming a 60-second round
-            // --- END OF MODIFICATION ---
-
-            Thread waitTimer;
             Thread[] play = new Thread[pc];
             for (int pnum = 0; pnum < pc; pnum++) {
+                // --- THIS IS THE FIX ---
+                // Create a new variable inside the loop.
+                // 'finalPnum' is "effectively final" for each iteration.
                 int finalPnum = pnum;
-                // --- MODIFICATION: Pass the roundStartTime to the gamePlay method ---
-                play[pnum] = new Thread(() -> gamePlay(finalPnum, word, timer, play, roundStartTime));
+                play[pnum] = new Thread(() -> gamePlay(finalPnum, word, play, roundStartTime));
                 play[pnum].start();
+                // --- END OF FIX ---
             }
+
             try {
-                timer.join();
+                // --- TIMER AND HINT LOGIC ---
+                boolean hintGiven = false;
+                for (int timeLeft = 60; timeLeft > 0; timeLeft--) {
+                    if (Server.correctGuessCount >= pc) {
+                        break;
+                    }
+                    if (timeLeft == 30 && !hintGiven) {
+                        generateAndSendHint(word);
+                        hintGiven = true;
+                    }
+                    int finalTime = timeLeft;
+                    Platform.runLater(() -> displayTimer.setText("Timer: " + finalTime));
+                    sleep(1000);
+                }
+                Platform.runLater(() -> displayTimer.setText("Timer: 0"));
+                // --- END OF LOGIC ---
+
                 sendScores(round);
                 if (round < Server.rounds) {
-                    waitTimer = setWaitTimer(10);
+                    Thread waitTimer = setWaitTimer(10);
                     sendResOut("ROUND OVER");
-                    for (int pnum = 0; pnum < pc; pnum++) play[pnum].join();
+                    for (int pnum = 0; pnum < pc; pnum++) {
+                        if(play[pnum].isAlive()) play[pnum].interrupt();
+                        play[pnum].join();
+                    }
                     sendResOut("Round: " + round + "   word: " + word);
                     waitTimer.join();
                 } else {
@@ -239,10 +261,7 @@ public class CanvasController {
                     sendResOut("GAME OVER");
                     sendResOut("Round: " + round + "   word: " + word);
                     sendDrawingAction(new DrawingAction(DrawingAction.ActionType.SHUTDOWN, 0, 0, 0, 0, 0, null));
-                    try {
-                        sleep(100);
-                    } catch (InterruptedException ignored) {
-                    }
+                    try { sleep(100); } catch (InterruptedException ignored) {}
                     System.exit(0);
                 }
             } catch (InterruptedException | IOException e) {
@@ -250,13 +269,15 @@ public class CanvasController {
             }
         }
     }
-    // Replace your existing gamePlay() method with this one
-    public void gamePlay(int pnum, String word, Thread timer, Thread[] playerThreads, long roundStartTime) {
+    // Replace your existing gamePlay method with this corrected version.
+    // The signature now correctly accepts the 'playerThreads' array.
+    public void gamePlay(int pnum, String word, Thread[] playerThreads, long roundStartTime) {
         String pname = Server.names.get(pnum);
         try {
             ObjectInputStream ois = Server.oisList.get(pnum);
             boolean answered = false;
-            while (timer.isAlive()) {
+            // The loop condition now checks if the thread has been interrupted
+            while (!Thread.currentThread().isInterrupted()) {
                 String guess = (String) ois.readObject();
                 if (guess.equals("IM_DONE_GUESSING")) break;
 
@@ -265,37 +286,33 @@ public class CanvasController {
 
                 if (word.equals(lowerCaseGuess)) {
                     int score = Server.scoreList.get(pnum);
-                    if (!answered && timer.isAlive()) {
-                        // --- THIS IS THE NEW DYNAMIC SCORING LOGIC ---
+                    if (!answered) {
                         long guessTime = System.currentTimeMillis();
                         long elapsedSeconds = (guessTime - roundStartTime) / 1000;
-
-                        // The score is higher for faster answers. Max score is 60, min is 1.
                         int scoreToAdd = Math.max(1, 60 - (int) elapsedSeconds);
-                        // --- END OF NEW SCORING LOGIC ---
 
                         Server.scoreList.set(pnum, score + scoreToAdd);
                         ScoreManager.saveScore(pname, scoreToAdd, word);
-
-                        // The message now includes the dynamically calculated score
                         sendResOut("STYLE_GREEN:" + pname + " guessed the word! (+" + scoreToAdd + " points)");
 
                         answered = true;
-                        handleCorrectGuess(timer, playerThreads);
+                        // Use the correctGuessCount to track progress
+                        Server.correctGuessCount++;
+                        // If all players have guessed, this will cause the main loop in gameHandler to break early.
                     } else {
                         sendPrivateMessage(pnum, "You already answered correctly!");
                     }
                 } else if (LevenshteinDistance.calculate(word, lowerCaseGuess) == 1) {
-                    if (!answered) {
-                        sendPrivateMessage(pnum, "STYLE_YELLOW:" + lowerCaseGuess + " is close!");
-                    }
+                    if (!answered) sendPrivateMessage(pnum, "STYLE_YELLOW:" + lowerCaseGuess + " is close!");
                     sendResOut(pname + ": " + guess);
                 } else {
                     sendResOut(pname + ": " + guess);
                 }
             }
         } catch (IOException | ClassNotFoundException e) {
-            System.out.println(e.getMessage());
+            // This is expected when the main game loop interrupts the thread at the end of a round.
+            // We can safely ignore it or just print a confirmation message.
+            System.out.println("Player thread for " + pname + " is finishing.");
         }
     }
  /*
@@ -385,6 +402,45 @@ public class CanvasController {
                     playerThread.interrupt();
                 }
             }
+        }
+    }
+
+    // --- NEW HELPER METHOD ---
+    private void generateAndSendHint(String word) {
+        // Find all possible indices that haven't been revealed yet
+        List<Integer> availableIndices = new ArrayList<>();
+        for (int i = 0; i < word.length(); i++) {
+            if (!revealedIndices.contains(i) && word.charAt(i) != ' ') {
+                availableIndices.add(i);
+            }
+        }
+
+        // If there are no more letters to reveal, do nothing
+        if (availableIndices.isEmpty()) {
+            return;
+        }
+
+        // Pick a random index from the available ones
+        int randomIndexToReveal = availableIndices.get((int) (Math.random() * availableIndices.size()));
+        revealedIndices.add(randomIndexToReveal);
+
+        // Build the hint string
+        StringBuilder hintBuilder = new StringBuilder();
+        for (int i = 0; i < word.length(); i++) {
+            if (revealedIndices.contains(i)) {
+                hintBuilder.append(word.charAt(i)).append(" ");
+            } else if (word.charAt(i) == ' ') {
+                hintBuilder.append("  "); // Handle spaces in words
+            } else {
+                hintBuilder.append("_ ");
+            }
+        }
+
+        // Send the hint to all players
+        try {
+            sendResOut("STYLE_YELLOW:Hint: " + hintBuilder.toString().trim());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
