@@ -49,3 +49,7 @@ Shakil,40,loop,2025/10/20 03:21:50
 Ahim,21,loop,2025/10/20 03:22:09
 Ahim,50,linked list,2025/10/20 03:22:29
 Shakil,20,linked list,2025/10/20 03:22:59
+ayan,22,orange,2025/10/20 19:25:39
+ayan,13,orange,2025/10/20 19:25:48
+ayan,49,rocket,2025/10/20 19:27:20
+ayan,43,rocket,2025/10/20 19:27:26
