@@ -8,10 +8,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class Canva extends Application {
+public class Canva  {
     CanvasController controller;
-
-    @Override
     public void start(Stage stage) throws Exception {
         Server.getWords();
         Server.getStartHandler();
@@ -28,7 +26,5 @@ public class Canva extends Application {
             System.exit(0);
         });
     }
-    public static void main(String[] args) {
-        launch(args);
-    }
+
 }
