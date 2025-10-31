@@ -19,7 +19,7 @@ public class Canva extends Application {
         Parent root = loader.load();
         controller = loader.getController();
 
-        stage.setTitle("Pictionary SERVER");
+        stage.setTitle("Drawbbl");
         Scene scene=new Scene(root);
         stage.setScene(scene);
         stage.show();

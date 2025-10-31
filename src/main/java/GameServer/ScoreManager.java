@@ -11,13 +11,7 @@ public class ScoreManager {
     private static final String SCORE_FILE = "scores.txt";
     private static final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 
-    /**
-     * Appends a player's score and the guessed word to the score file.
-     * The format will be: username,score,word,date
-     * @param username The player's username.
-     * @param score The score they achieved in the round.
-     * @param word The word they guessed correctly.
-     */
+
     public static synchronized void saveScore(String username, int score, String word) { // MODIFIED
         try (FileWriter fw = new FileWriter(SCORE_FILE, true);
              BufferedWriter bw = new BufferedWriter(fw);
