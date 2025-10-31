@@ -28,7 +28,7 @@ public class LauncherController {
     @FXML
     void handleGuesserClick(ActionEvent event) {
         try {
-            // Create an instance of the client application
+
             App clientApp = new App();
             Stage clientStage = new Stage();
             // Start the client UI
@@ -38,7 +38,7 @@ public class LauncherController {
             closeLauncher(event);
         } catch (Exception e) {
             e.printStackTrace();
-            // Handle potential exceptions during client startup
+
         }
     }
 

@@ -27,7 +27,7 @@ public class StartHandler extends Thread{
             // This socket is now for drawing actions
             Socket drawingSocket = Server.listener1.accept();
             Server.socketList.add(drawingSocket);
-            // MODIFIED: Create and store an ObjectOutputStream for this socket.
+
             Server.drawingOut.add(new ObjectOutputStream(drawingSocket.getOutputStream()));
 
             name= (String) dIn.readObject();

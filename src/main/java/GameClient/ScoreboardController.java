@@ -38,7 +38,7 @@ public class ScoreboardController {
         loadScores(GameContext.getLoggedInUsername());
     }
 
-    // MODIFIED to read the new file format
+
     private void loadScores(String username) {
         ObservableList<Score> scores = FXCollections.observableArrayList();
         try (BufferedReader br = new BufferedReader(new FileReader("scores.txt"))) {

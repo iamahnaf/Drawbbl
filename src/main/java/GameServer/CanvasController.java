@@ -42,14 +42,14 @@ public class CanvasController {
     private Label displayTimer, wordLabel;
     private GraphicsContext g;
 
-    // NEW: Variables to store the last mouse position
+
     private double lastX, lastY;
-    // --- NEW VARIABLE: To track revealed hint indices for the current word ---
+
     private final List<Integer> revealedIndices = new ArrayList<>();
 
     File newFile = new File("cursor.png");
     private final Image penCursor = new Image(newFile.toURI().toString());
-  //  private CheckStatus checker = new CheckStatus();
+
 
 
     @FXML
@@ -63,7 +63,7 @@ public class CanvasController {
         canvas.setCursor(new ImageCursor(penCursor, 0, penCursor.getHeight()));
         list.setWrapText(true);
 
-        // NEW: Handle the start of a drawing path
+
         canvas.setOnMousePressed(e -> {
             lastX = e.getX();
             lastY = e.getY();
@@ -126,7 +126,7 @@ public class CanvasController {
             for (ObjectOutputStream oos : Server.drawingOut) {
                 oos.writeObject(action);
                 oos.flush();
-                // We can also reset the stream to prevent memory buildup from object caching
+
                 oos.reset();
             }
         } catch (IOException e) {
@@ -168,7 +168,7 @@ public class CanvasController {
                 }
                 Platform.runLater(() -> displayTimer.setText("Timer: "+0));
             } catch (InterruptedException e) {
-                // MODIFICATION: This is expected. Just print a clean message and exit the thread.
+
                 System.out.println("Server timer interrupted, finishing early.");
                 Thread.currentThread().interrupt(); // Preserve the interrupted status
             }
@@ -196,7 +196,7 @@ public class CanvasController {
         return t;
     }
 
-    // Replace your existing gameHandler() method with this corrected version.
+
     public void gameHandler() {
         int pc = Server.playerCount;
         Server.refreshWords();
@@ -219,13 +219,11 @@ public class CanvasController {
             long roundStartTime = System.currentTimeMillis();
             Thread[] play = new Thread[pc];
             for (int pnum = 0; pnum < pc; pnum++) {
-                // --- THIS IS THE FIX ---
-                // Create a new variable inside the loop.
-                // 'finalPnum' is "effectively final" for each iteration.
+
                 int finalPnum = pnum;
                 play[pnum] = new Thread(() -> gamePlay(finalPnum, word, play, roundStartTime));
                 play[pnum].start();
-                // --- END OF FIX ---
+
             }
 
             try {
@@ -244,7 +242,7 @@ public class CanvasController {
                     sleep(1000);
                 }
                 Platform.runLater(() -> displayTimer.setText("Timer: 0"));
-                // --- END OF LOGIC ---
+
 
                 sendScores(round);
                 if (round < Server.rounds) {
@@ -269,8 +267,7 @@ public class CanvasController {
             }
         }
     }
-    // Replace your existing gamePlay method with this corrected version.
-    // The signature now correctly accepts the 'playerThreads' array.
+
     public void gamePlay(int pnum, String word, Thread[] playerThreads, long roundStartTime) {
         String pname = Server.names.get(pnum);
         try {
@@ -296,9 +293,9 @@ public class CanvasController {
                         sendResOut("STYLE_GREEN:" + pname + " guessed the word! (+" + scoreToAdd + " points)");
 
                         answered = true;
-                        // Use the correctGuessCount to track progress
+
                         Server.correctGuessCount++;
-                        // If all players have guessed, this will cause the main loop in gameHandler to break early.
+
                     } else {
                         sendPrivateMessage(pnum, "You already answered correctly!");
                     }
@@ -315,35 +312,7 @@ public class CanvasController {
             System.out.println("Player thread for " + pname + " is finishing.");
         }
     }
- /*
-    public void gamePlay(int pnum,String word,Thread timer){
-        String pname=Server.names.get(pnum);
-        try {
-            ObjectInputStream ois = Server.oisList.get(pnum);
-            boolean answered=false;
-            while (timer.isAlive()){
-                String guess = (String) ois.readObject();
-                if(guess.equals("IM_DONE_GUESSING")) break;
 
-                Platform.runLater(()->list.appendText(pname+": "+guess+"\n"));
-                if (word.equals(guess.toLowerCase())){
-                    int score = Server.scoreList.get(pnum);
-                    if(!answered && timer.isAlive()) {
-                        Server.scoreList.set(pnum, score+10);
-                        sendResOut(pname+": Got it Correct!");
-                        answered=true;
-                    }
-                    else sendResOut(pname+": Already Answered!");
-                }
-                else sendResOut(pname+": "+guess);
-            }
-        } catch (IOException | ClassNotFoundException e) {
-            try {
-                checker.checkPresence();
-            } catch (IOException ioException) { ioException.printStackTrace(); }
-        }
-    }
-   */
     public synchronized void sendResOut(String res) throws IOException {
         for(ObjectOutputStream oos:Server.oosList){
             oos.writeObject(res);

@@ -29,9 +29,9 @@ public class Server {
     public static int rounds=3;
     public static volatile int correctGuessCount = 0;
 
-    // Add the missing isGameRunning field.
+
     public static volatile boolean isGameRunning = false;
-    // --- END OF FIX ---
+
 
     public static ArrayList<String> names=new ArrayList<>();
     public static ArrayList<Integer> scoreList=new ArrayList<>();
@@ -40,26 +40,7 @@ public class Server {
     public static ArrayList<String> words=new ArrayList<>();
 
     Stage stage;
-    /*
-    @Override
-    public void start(Stage primaryStage) throws Exception{
-        stage=primaryStage;
-        Parent root = FXMLLoader.load(getClass().getResource("canvas.fxml"));
-        stage.setTitle("Pictionary SERVER");
-        Scene scene=new Scene(root);
-        stage.setScene(scene);
-        stage.show();
-    }
-    */
 
-   /*
-    public static void main(String[] args) throws IOException, InterruptedException {
-        getWords();
-        getStartHandler();
-        System.out.println("GameHandler Started..");
-        launch(args);
-    }
-   */
    public static void getWords() {
        // Determine which file to use based on the GameContext
        String gameMode = GameClient.GameContext.getGameMode();
@@ -85,7 +66,7 @@ public class Server {
            System.err.println("CRITICAL: Word file not found: " + fileName);
        }
    }
-    // Add this method to allow the game handler to refresh the words
+
     public static void refreshWords() {
         getWords();
     }

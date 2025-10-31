@@ -36,19 +36,15 @@ public class CanvaviewController {
     @FXML
     private TextFlow chatTextFlow;
 
-    private GraphicsContext g; // NEW: GraphicsContext for the canvas
+    private GraphicsContext g;
     private UserData player;
     private ObjectOutputStream dOut;
-    private ObjectInputStream dIn; // For game state strings
-    private ObjectInputStream drawingIn; // For DrawingAction objects
+    private ObjectInputStream dIn;
+    private ObjectInputStream drawingIn;
     boolean gameOver = false;
-    // --- THIS IS THE FIX ---
-    // Add a variable to store this player's most recent score.
-    private int myCurrentScore = 0;
-    // --- END OF FIX -
 
-    // The 'onSave' method will no longer work as easily without an ImageView,
-    // but you can snapshot the canvas if you need to re-implement it.
+    private int myCurrentScore = 0;
+
     public void onSave() {
         System.out.println("Saving Image.... (feature needs update for canvas)");
     }
@@ -236,21 +232,17 @@ public class CanvaviewController {
             System.exit(0);
         }
     }
-// In CanvaviewController.java
-// Replace your existing appendStyledText method with this one.
+
 private void appendStyledText(String rawMessage) {
     String message = rawMessage;
     Color messageColor = Color.BLACK;
 
-    // --- THIS IS THE NEW LOGIC ---
-    // Check if this is a "correct guess" message and, if so, remove the points part for display.
+
     int pointsIndex = message.indexOf(" (+");
     if (pointsIndex != -1 && message.contains(" guessed the word!")) {
         message = message.substring(0, pointsIndex);
     }
-    // --- END OF NEW LOGIC ---
 
-    // 1. Check for special color prefixes and strip them
     if (message.startsWith("STYLE_YELLOW:")) {
         message = message.substring("STYLE_YELLOW:".length());
         messageColor = Color.ORANGE;
@@ -259,10 +251,8 @@ private void appendStyledText(String rawMessage) {
         messageColor = Color.LIMEGREEN;
     }
 
-    // 2. Split the message into speaker and content
     int colonIndex = message.indexOf(":");
 
-    // Case 1: It's a player/server message like "Aran: mat"
     if (colonIndex > 0) {
         String speaker = message.substring(0, colonIndex);
         String content = message.substring(colonIndex); // Includes the ":"
@@ -299,13 +289,12 @@ private void appendStyledText(String rawMessage) {
                     // Read the DrawingAction object from the stream
                     DrawingAction action = (DrawingAction) drawingIn.readObject();
 
-                    // --- MODIFICATION: Check for the shutdown command ---
                     if (action.getType() == DrawingAction.ActionType.SHUTDOWN) {
                         System.out.println("Received shutdown command from server. Closing drawing receiver.");
                         gameOver = true; // This will cause the loop to terminate
                         continue; // Skip processing and let the loop exit
                     }
-                    // --- END MODIFICATION ---
+
 
                     // Use Platform.runLater to update the UI from this thread
                     Platform.runLater(() -> processDrawingAction(action));
@@ -313,8 +302,7 @@ private void appendStyledText(String rawMessage) {
                 drawingIn.close();
                 player.drawingSocket.close();
             } catch (IOException | ClassNotFoundException e) {
-                // This is now the ONLY place a connection error should happen during normal play.
-                // If the server crashes unexpectedly, this will catch it.
+
                 if (!gameOver) { // Only print if we weren't expecting the game to end.
                     System.err.println("Connection to server lost.");
                     e.printStackTrace();
@@ -331,7 +319,7 @@ private void appendStyledText(String rawMessage) {
         }).start();
     }
 
-    // MODIFIED: This method now handles line drawing
+
     private void processDrawingAction(DrawingAction action) {
         double fromX = action.getFromX();
         double fromY = action.getFromY();
@@ -362,9 +350,6 @@ private void appendStyledText(String rawMessage) {
                 break;
         }
     }
-
-    // DELETED: The old imageReceiver method is no longer needed.
-    // public void imageReceiver() { ... }
 
 
 }

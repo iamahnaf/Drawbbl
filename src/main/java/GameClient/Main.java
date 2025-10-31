@@ -11,11 +11,10 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        // --- THIS IS THE FIX ---
-        // Load the new login screen instead of the launcher.
+
         Parent root = FXMLLoader.load(getClass().getResource("/GameAuth/Login.fxml"));
         primaryStage.setTitle("Drawbbl Login");
-        // --- END OF FIX ---
+
 
         try {
             Image appIcon = new Image(getClass().getResourceAsStream("icon.png"));
