@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.net.URL?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Label?>
@@ -12,33 +13,30 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 <?import javafx.scene.text.TextFlow?>
 
-<BorderPane prefHeight="705.0" prefWidth="1130.0" style="-fx-background-color: #cce6ff;" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GameClient.CanvaviewController">
+<BorderPane prefHeight="705.0" prefWidth="1130.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GameClient.CanvaviewController">
+   <stylesheets>
+      <URL value="@Styles.css" />
+      <URL value="@Styles.css" />
+   </stylesheets>
     <top>
-        <VBox prefHeight="70.0" prefWidth="800.0" style="-fx-background-color: #003366;">
+        <VBox prefHeight="70.0" prefWidth="800.0" styleClass="top-bar">
             <MenuBar>
                 <Menu text="File">
                     <MenuItem onAction="#onSave" text="Save" />
                     <MenuItem onAction="#onExit" text="Exit" />
                 </Menu>
             </MenuBar>
-            <HBox prefHeight="41.0" prefWidth="200.0">
+            <HBox prefHeight="41.0" prefWidth="200.0" styleClass="info-bar">
                 <children>
-                    <Label fx:id="serverLabel" prefHeight="41.0" prefWidth="658.0" text="Round:      Word:" textFill="WHITE">
-                        <font>
-                            <Font name="Tlwg Mono Bold" size="19.0" />
-                        </font>
+                    <Label fx:id="serverLabel" prefHeight="41.0" prefWidth="658.0" text="Round:      Word:">
                         <padding>
                             <Insets left="10.0" />
                         </padding>
                     </Label>
-                    <Separator orientation="VERTICAL" prefHeight="41.0" prefWidth="4.0" style="-fx-background-color: #003366;" />
-                    <Label fx:id="displayTimer" alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefHeight="41.0" prefWidth="263.0" text="Next Round in: 00" textFill="WHITE">
-                        <font>
-                            <Font name="Tlwg Mono Bold" size="21.0" />
-                        </font>
+                    <Separator orientation="VERTICAL" prefHeight="41.0" prefWidth="4.0" />
+                    <Label fx:id="displayTimer" alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefHeight="41.0" prefWidth="263.0" text="Next Round in: 00">
                         <padding>
                             <Insets left="10.0" right="10.0" />
                         </padding>
@@ -51,50 +49,38 @@
         </VBox>
     </top>
     <right>
-        <VBox prefHeight="600.0" prefWidth="280.0" style="-fx-background-color: #ffebe6;" BorderPane.alignment="CENTER">
+        <VBox prefHeight="600.0" prefWidth="280.0" styleClass="chat-area" BorderPane.alignment="CENTER">
             <children>
-                <!-- THIS IS THE NEW CODE YOU SHOULD PUT IN ITS PLACE -->
-                <ScrollPane fx:id="chatScrollPane" fitToWidth="true" prefHeight="557.0" prefWidth="275.0" style="-fx-background-color: #ffebe6;">
+                <ScrollPane fx:id="chatScrollPane" fitToWidth="true" prefHeight="557.0" prefWidth="275.0" styleClass="chat-scroll-pane">
                     <content>
-                        <TextFlow fx:id="chatTextFlow" style="-fx-background-color: #ffebe6;" />
+                        <TextFlow fx:id="chatTextFlow" styleClass="chat-text-flow" />
                     </content>
                 </ScrollPane>
                 <Separator prefWidth="275.0" />
-                <TextField fx:id="message" onAction="#onMessage" promptText="guess here" style="-fx-background-color: #ffc2b3;">
-                    <font>
-                        <Font name="Tlwg Mono Bold" size="17.0" />
-                    </font></TextField>
+                <TextField fx:id="message" onAction="#onMessage" promptText="guess here" styleClass="message-field" />
             </children>
-            <padding>
-                <Insets right="5.0" />
-            </padding></VBox>
+        </VBox>
     </right>
     <bottom>
-        <HBox prefHeight="35.0" prefWidth="774.0" style="-fx-background-color: #ff3300;" BorderPane.alignment="CENTER">
+        <HBox prefHeight="35.0" prefWidth="774.0" styleClass="bottom-bar" BorderPane.alignment="CENTER">
             <children>
-                <Label fx:id="drawnBy" prefHeight="33.0" prefWidth="332.0" text="Drawn by: SERVER" textFill="WHITE">
+                <Label fx:id="drawnBy" prefHeight="33.0" prefWidth="332.0" text="Drawn by: SERVER">
                     <HBox.margin>
                         <Insets left="20.0" />
                     </HBox.margin>
-                    <font>
-                        <Font name="Tlwg Mono Bold" size="20.0" />
-                    </font>
                 </Label>
-                <Label fx:id="playerDisplay" prefHeight="35.0" prefWidth="312.0" text="PLAYER: " textFill="WHITE" wrapText="true">
+                <Label fx:id="playerDisplay" prefHeight="35.0" prefWidth="312.0" text="PLAYER: " wrapText="true">
                     <padding>
                         <Insets left="10.0" />
                     </padding>
                     <HBox.margin>
                         <Insets left="250.0" />
                     </HBox.margin>
-                    <font>
-                        <Font name="Tlwg Mono Bold" size="20.0" />
-                    </font>
                 </Label>
-            </children></HBox>
+            </children>
+        </HBox>
     </bottom>
     <center>
-        <!-- REPLACE ImageView with Canvas -->
-        <Canvas fx:id="canvas" height="600.0" width="842.0" BorderPane.alignment="CENTER" />
+        <Canvas fx:id="canvas" height="600.0" styleClass="canvas" width="842.0" BorderPane.alignment="CENTER" />
     </center>
 </BorderPane>

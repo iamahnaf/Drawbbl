@@ -1,0 +1,106 @@
+/* General Styles */
+.root {
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+    -fx-background-color: #F4F7F9; /* Light grey background for the whole window */
+}
+
+/* Top Bar (VBox) */
+.top-bar {
+    -fx-background-color: #2C3E50; /* Dark slate blue */
+    -fx-padding: 0;
+}
+
+/* Menu Bar Styling */
+.menu-bar {
+    -fx-background-color: #2C3E50;
+}
+
+.menu-bar .label {
+    -fx-text-fill: #ECF0F1; /* Light grey text */
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.menu:hover, .menu:showing {
+    -fx-background-color: #34495E; /* Slightly lighter blue on hover */
+}
+
+.menu-item .label {
+    -fx-text-fill: #2C3E50; /* Dark text for menu items */
+}
+
+.menu-item:focused {
+    -fx-background-color: #3498DB; /* Blue accent for selected item */
+}
+
+.menu-item:focused .label {
+    -fx-text-fill: white;
+}
+
+/* Top Info Bar (HBox with Round, Word, Timer) */
+.info-bar {
+    -fx-background-color: #34495E; /* Slightly lighter slate blue */
+    -fx-padding: 5px 15px;
+    -fx-alignment: center-left;
+}
+
+.info-bar .label {
+    -fx-text-fill: #ECF0F1; /* Light grey text */
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.info-bar .separator {
+    -fx-background-color: #2C3E50;
+}
+
+/* Right Chat Area */
+.chat-area {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #DDE3E7;
+    -fx-border-width: 0 0 0 1; /* Left border */
+}
+
+/* Chat Scroll Pane and Text Flow */
+.chat-scroll-pane {
+    -fx-background-color: transparent;
+    -fx-padding: 5px;
+}
+
+.chat-text-flow {
+    -fx-background-color: transparent;
+    -fx-padding: 5px;
+}
+
+/* Message Input Field */
+.message-field {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #DDE3E7 transparent transparent transparent; /* Top border */
+    -fx-border-width: 1px;
+    -fx-font-size: 15px;
+    -fx-prompt-text-fill: #AAB2B8;
+    -fx-padding: 10px;
+}
+
+.message-field:focused {
+    -fx-background-color: #FDFEFE;
+    -fx-border-color: #3498DB; /* Blue highlight on focus */
+}
+
+/* Bottom Bar */
+.bottom-bar {
+    -fx-background-color: #2C3E50; /* Dark slate blue, same as top */
+    -fx-padding: 8px 20px;
+    -fx-alignment: center-left;
+}
+
+.bottom-bar .label {
+    -fx-text-fill: #ECF0F1;
+    -fx-font-size: 16px;
+}
+
+/* Canvas */
+.canvas {
+    -fx-background-color: white;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 0);
+}
