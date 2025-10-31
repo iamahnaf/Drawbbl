@@ -41,3 +41,14 @@
     -fx-scale-x: 1.05;
     -fx-scale-y: 1.05;
 }
+/* Add this new style to your existing launcher_styles.css file */
+
+.status-label {
+    -fx-font-family: "Arial Rounded MT Bold", "Helvetica", sans-serif;
+    -fx-font-size: 24px;
+    -fx-text-fill: #333333;
+    -fx-background-color: rgba(255, 255, 255, 0.8);
+    -fx-background-radius: 20;
+    -fx-padding: 40;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 15, 0, 0, 0);
+}

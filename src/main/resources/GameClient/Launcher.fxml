@@ -3,25 +3,33 @@
 <?import java.net.URL?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-
-<!-- The root is now an AnchorPane -->
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="725.0" prefWidth="1108.0" styleClass="root-pane" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GameClient.LauncherController">
     <stylesheets>
         <URL value="@launcher_styles.css" />
     </stylesheets>
     <children>
-        <!-- This VBox is our semi-transparent frame -->
-        <VBox alignment="CENTER" layoutX="282.0" layoutY="332.0" maxHeight="719.0" maxWidth="1108.0" prefHeight="337.0" prefWidth="555.0" spacing="15.0" styleClass="button-container" AnchorPane.bottomAnchor="27.0" AnchorPane.leftAnchor="282.0" AnchorPane.rightAnchor="271.0">
+        <!-- StackPane allows the waiting label to overlay the button container -->
+        <StackPane AnchorPane.bottomAnchor="27.0" AnchorPane.leftAnchor="282.0" AnchorPane.rightAnchor="271.0">
             <children>
-                <Button fx:id="drawerButton" onAction="#handleDrawerClick" prefHeight="50.0" prefWidth="280.0" styleClass="custom-button" text="Drawer (Host Server)" />
-                <Button fx:id="guesserButton" onAction="#handleGuesserClick" prefHeight="50.0" prefWidth="280.0" styleClass="custom-button" text="Join as Guesser" />
+                <!-- This VBox is our semi-transparent frame with the buttons -->
+                <VBox fx:id="buttonContainer" alignment="CENTER" prefHeight="337.0" prefWidth="555.0" spacing="15.0" styleClass="button-container">
+                    <children>
+                        <Button fx:id="drawerButton" onAction="#handleDrawerClick" prefHeight="50.0" prefWidth="280.0" styleClass="custom-button" text="Drawer (Host Server)" />
+                        <Button fx:id="guesserButton" onAction="#handleGuesserClick" prefHeight="50.0" prefWidth="280.0" styleClass="custom-button" text="Join as Guesser" />
+                    </children>
+                    <padding>
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                    </padding>
+                </VBox>
+
+                <!-- NEW: The waiting label, initially hidden -->
+                <Label fx:id="waitingLabel" alignment="CENTER" styleClass="status-label" text="Starting server...&#10;Waiting for guessers to join." textAlignment="CENTER" visible="false" wrapText="true" />
             </children>
-            <padding>
-                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-            </padding>
-        </VBox>
+        </StackPane>
     </children>
 </AnchorPane>
