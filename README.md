@@ -10,7 +10,9 @@ You can include your gameplay video here:
 
 Or link your YouTube demo:
 
-[▶️ Watch on YouTube](https://www.youtube.com/watch?v=6NklAl4Lb1c)
+[![Watch on YouTube](https://img.youtube.com/vi/6NklAl4Lb1c/hqdefault.jpg)](https://www.youtube.com/watch?v=6NklAl4Lb1c)
+- (Click the image to watch the gameplay video on YouTube!)
+
 
 ---
 
